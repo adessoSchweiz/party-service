@@ -72,11 +72,17 @@
             <artifactId>avro</artifactId>
             <version>${avro.version}</version>
         </dependency>
-        <dependency>
-            <groupId>ch.adesso</groupId>
-            <artifactId>party-utils</artifactId>
-            <version>${party-utils.version}</version>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>ch.adesso</groupId> -->
+<!--             <artifactId>party-utils</artifactId> -->
+<!--             <version>${party-utils.version}</version> -->
+<!--         </dependency> -->
+
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-streams</artifactId>
+			<version>${kafka.version}</version>
+		</dependency>
     </dependencies>
     <build>
         <finalName>party-service</finalName>
