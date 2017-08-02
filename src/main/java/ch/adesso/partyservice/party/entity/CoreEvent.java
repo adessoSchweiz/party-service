@@ -13,13 +13,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @ToString
 public class CoreEvent {
-    private String eventId;
+    private String streamId;
     private String eventType;
     private long timestamp;
+    private long sequence;
 
-    public CoreEvent(Class<?> eventType) {
-        this.eventId = UUID.randomUUID().toString();
+    public CoreEvent(Class<?> eventType, String streamId, long sequence) {
         this.timestamp = System.nanoTime();
         this.eventType = eventType.getName();
+        this.streamId = streamId;
+        this.sequence = sequence;
     }
 }

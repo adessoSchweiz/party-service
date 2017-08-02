@@ -12,7 +12,7 @@ import org.apache.avro.reflect.Union;
 @Union({PersonCreatedEvent.class, PersonChangedEvent.class})
 public class PartyEvent extends CoreEvent {
 
-    public PartyEvent(Class<?> eventType) {
-        super(eventType);
+    public PartyEvent(Class<?> eventType, String streamId, long sequence) {
+        super(eventType, streamId, sequence);
     }
 }

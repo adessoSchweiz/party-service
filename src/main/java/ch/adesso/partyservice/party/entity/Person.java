@@ -1,13 +1,10 @@
 package ch.adesso.partyservice.party.entity;
 
-import ch.adesso.partyservice.LocalDateTimeAdapter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.time.LocalDateTime;
+import org.apache.avro.reflect.AvroDefault;
 
 @Data
 @NoArgsConstructor
@@ -15,19 +12,41 @@ import java.time.LocalDateTime;
 @ToString
 public class Person {
 
-    private String id;
+    private String partyId;
+    
+    @AvroDefault("null")
     private String firstname;
+    
+    @AvroDefault("null")
     private String lastname;
-    private long version;
 
-    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
-    private LocalDateTime birthdate;
+    @AvroDefault("0")
+    private long version = 0;
 
+    public Person applyEvent(PartyEvent event) {
+    	System.out.println("apply PersonEvent: " + event);
+    	if(event instanceof PersonCreatedEvent) {
+            applyEvent((PersonCreatedEvent)event);
+        } else if((event instanceof PersonChangedEvent)) {
+            applyEvent((PersonChangedEvent) event);
+        }
+        return this;
+    }
 
-    public Person applyEvent(String event) {
-        //firstname = event.getFirstname();
-        //lastname = event.getLastName()
-        System.out.println("got event !!!!! " + event);
+    public Person applyEvent(PersonChangedEvent event) {
+    	System.out.println("apply PersonChangedEvent: " + event);
+        firstname = event.getFirstname();
+        lastname = event.getLastname();
+        version = event.getSequence();
+        return this;
+    }
+
+    public Person applyEvent(PersonCreatedEvent event) {
+    	System.out.println("apply PersonCreatedEvent: " + event);
+        firstname = event.getFirstname();
+        lastname = event.getLastname();
+        partyId = event.getStreamId();
+        version = event.getSequence();
         return this;
     }
 

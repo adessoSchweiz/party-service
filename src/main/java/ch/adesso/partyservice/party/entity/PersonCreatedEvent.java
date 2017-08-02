@@ -5,23 +5,19 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.apache.avro.reflect.AvroDefault;
 
-/**
- * Created by hackathon on 11.06.17.
- */
 @Data
 @ToString
 @NoArgsConstructor
 public class PersonCreatedEvent extends PartyEvent {
 
-    private String partyId;
-
     @AvroDefault("null")
     private String firstname;
+    
     @AvroDefault("null")
     private String lastname;
-    public PersonCreatedEvent(String partyId, String firstname, String lastname) {
-        super(PersonCreatedEvent.class);
-        this.partyId = partyId;
+    
+    public PersonCreatedEvent( String partyId, long sequence, String firstname, String lastname) {
+        super(PersonCreatedEvent.class, partyId, sequence);
         this.firstname = firstname;
         this.lastname = lastname;
     }

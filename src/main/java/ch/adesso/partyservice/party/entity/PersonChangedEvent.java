@@ -13,14 +13,14 @@ import org.apache.avro.reflect.AvroDefault;
 @NoArgsConstructor
 public class PersonChangedEvent extends PartyEvent {
 
-    private String partyId;
     @AvroDefault("null")
     private String firstname;
+    
     @AvroDefault("null")
     private String lastname;
-    public PersonChangedEvent(String partyId, String firstname, String lastname) {
-        super(PersonChangedEvent.class);
-        this.partyId = partyId;
+    
+    public PersonChangedEvent(String partyId, long sequence, String firstname, String lastname) {
+        super(PersonChangedEvent.class, partyId, sequence);
         this.firstname = firstname;
         this.lastname = lastname;
     }
