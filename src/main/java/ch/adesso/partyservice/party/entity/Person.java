@@ -1,53 +1,30 @@
 package ch.adesso.partyservice.party.entity;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
+
+import org.apache.avro.reflect.Nullable;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.apache.avro.reflect.AvroDefault;
 
 @Data
+@EqualsAndHashCode(callSuper=true)
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
-public class Person {
+public class Person extends Party {
 
-    private String partyId;
-    
-    @AvroDefault("null")
+	@Nullable
     private String firstname;
     
-    @AvroDefault("null")
+	@Nullable
     private String lastname;
-
-    @AvroDefault("0")
-    private long version = 0;
-
-    public Person applyEvent(PartyEvent event) {
-    	System.out.println("apply PersonEvent: " + event);
-    	if(event instanceof PersonCreatedEvent) {
-            applyEvent((PersonCreatedEvent)event);
-        } else if((event instanceof PersonChangedEvent)) {
-            applyEvent((PersonChangedEvent) event);
-        }
-        return this;
-    }
-
-    public Person applyEvent(PersonChangedEvent event) {
-    	System.out.println("apply PersonChangedEvent: " + event);
-        firstname = event.getFirstname();
-        lastname = event.getLastname();
-        version = event.getSequence();
-        return this;
-    }
-
-    public Person applyEvent(PersonCreatedEvent event) {
-    	System.out.println("apply PersonCreatedEvent: " + event);
-        firstname = event.getFirstname();
-        lastname = event.getLastname();
-        partyId = event.getStreamId();
-        version = event.getSequence();
-        return this;
-    }
-
+    
+    public Person(List<Contact> contacts, String firstname, String lastname) {
+		super();
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.setContacts(contacts);
+	}
 }

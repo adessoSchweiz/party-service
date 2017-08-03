@@ -2,6 +2,7 @@ package ch.adesso.partyservice.party.kafka;
 
 import java.util.Collections;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -14,14 +15,13 @@ import javax.enterprise.inject.Produces;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.kstream.KStreamBuilder;
 import org.apache.kafka.streams.processor.StateStoreSupplier;
 import org.apache.kafka.streams.state.Stores;
 
-import ch.adesso.partyservice.party.entity.EventEnvelope;
-import ch.adesso.partyservice.party.entity.Person;
+import ch.adesso.partyservice.party.entity.Passenger;
+import ch.adesso.partyservice.party.event.EventEnvelope;
 import ch.adesso.utils.kafka.AbstractKafkaStreamProvider;
 import ch.adesso.utils.kafka.KafkaAvroReflectDeserializer;
 import ch.adesso.utils.kafka.KafkaAvroReflectSerializer;
@@ -34,6 +34,7 @@ public class KafkaStreamProvider extends AbstractKafkaStreamProvider {
 
 	private String SCHEMA_REGISTRY_URL;
 
+	
 	@Override
 	protected KStreamBuilder createStreamBuilder() {
 
@@ -45,8 +46,8 @@ public class KafkaStreamProvider extends AbstractKafkaStreamProvider {
                 Collections.singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
                         SCHEMA_REGISTRY_URL),false);
 
-        final Serde<Person> personSerde = Serdes.serdeFrom(new KafkaAvroReflectSerializer<>(),
-                new KafkaAvroReflectDeserializer<>(Person.class));
+        final Serde<Passenger> personSerde = Serdes.serdeFrom(new KafkaAvroReflectSerializer<>(),
+                new KafkaAvroReflectDeserializer<>(Passenger.class));
 
         personSerde.configure(
                 Collections.singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
@@ -54,30 +55,27 @@ public class KafkaStreamProvider extends AbstractKafkaStreamProvider {
 
         final KStreamBuilder builder = new KStreamBuilder();
 
+        Supplier<Passenger> passengerFactory = new Supplier<Passenger>() {
+
+			@Override
+			public Passenger get() {
+				return new Passenger();
+			}
+		};
+        
         // local store for party aggregate
-        StateStoreSupplier stateStore = Stores.create(Topics.PARTY_STORE.getTopic())
+        StateStoreSupplier<?> stateStore = Stores.create(Topics.PASSENGER_STORE.getTopic())
                 .withKeys(Serdes.String())
                 .withValues(personSerde)
                 .persistent()
                 .build();
         
-        builder.addSource("party-events-source", new StringDeserializer(), eventSerde.deserializer(), Topics.PARTY_EVENTS_TOPIC.getTopic())
+        builder.addSource("party-events-source", new StringDeserializer(), eventSerde.deserializer(), Topics.PASSENGER_EVENTS_TOPIC.getTopic())
                // aggregate event to party
-               .addProcessor("party-processor", () -> new PartyProcessor(Topics.PARTY_STORE.getTopic()), "party-events-source")
+               .addProcessor("party-processor", () -> new AggregateProcessor<Passenger>(Topics.PASSENGER_STORE.getTopic(), passengerFactory), "party-events-source")
         	   // use local store
                .addStateStore(stateStore, "party-processor");
 
-        
-//        // read person event stream
-//        KStream<String, EventEnvelope> personEventStream = builder.stream(Serdes.String(), eventSerde, Topics.PARTY_EVENTS.getTopic());
-//
-//        // aggregate events to person
-//        personEventStream
-//        		.groupByKey(Serdes.String(), eventSerde)
-//                .aggregate(Person::new,
-//                        (aggKey, newValue, person) -> person.applyEvent(newValue.getEvent()),
-//                        personSerde,
-//                        Topics.PARTY.getTopic());
         
         return builder;
 	}
@@ -88,39 +86,21 @@ public class KafkaStreamProvider extends AbstractKafkaStreamProvider {
 		return super.updateProperties(properties);
 	}
 	
-	protected KafkaStreams kafkaStreams;
 
 	@PostConstruct
 	public void init() {
-		this.kafkaStreams = createKafkaStreams();
+		super.init();
 	}
 
 	@PreDestroy
 	public void close() {
-		this.kafkaStreams.close();
+		super.close();
 	}
 
 	@Produces
 	public KafkaStreams getKafkaStreams() {
-		return kafkaStreams;
+		return super.getKafkaStreams();
 	}
-
-	
-//	@PostConstruct
-//	public void init() {
-//		super.init();
-//	}
-//
-//	@PreDestroy
-//	public void close() {
-//		super.close();
-//	}
-//
-//	@Produces
-//	public KafkaStreams getKafkaStreams() {
-//		return super.getKafkaStreams();
-//	}
-
 
 }
 

@@ -1,4 +1,4 @@
-package ch.adesso.partyservice.party.entity;
+package ch.adesso.partyservice.party.event;
 
 import org.apache.avro.reflect.Nullable;
 

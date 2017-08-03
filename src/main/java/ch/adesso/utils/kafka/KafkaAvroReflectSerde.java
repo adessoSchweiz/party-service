@@ -1,14 +1,14 @@
 package ch.adesso.utils.kafka;
 
-import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
-import io.confluent.kafka.serializers.KafkaAvroDeserializer;
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
 
-import java.util.Collections;
-import java.util.Map;
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 
 public class KafkaAvroReflectSerde<T> implements Serde<T> {
 

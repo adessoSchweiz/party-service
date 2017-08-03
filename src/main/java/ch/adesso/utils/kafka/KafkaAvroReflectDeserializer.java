@@ -1,9 +1,11 @@
 package ch.adesso.utils.kafka;
 
-import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
-import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
-import io.confluent.kafka.serializers.AbstractKafkaAvroDeserializer;
-import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.nio.ByteBuffer;
+import java.util.Map;
+
 import org.apache.avro.Schema;
 import org.apache.avro.io.BinaryDecoder;
 import org.apache.avro.io.DatumReader;
@@ -13,18 +15,15 @@ import org.apache.avro.reflect.ReflectDatumReader;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Deserializer;
 
-import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.nio.ByteBuffer;
-import java.util.Map;
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+import io.confluent.kafka.serializers.AbstractKafkaAvroDeserializer;
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 
 /**
  * Extends deserializer to support ReflectData.
  */
 public class KafkaAvroReflectDeserializer<T> extends AbstractKafkaAvroDeserializer implements Deserializer<T> {
-
-    private boolean isKey;
 
     private Schema readerSchema;
     private DecoderFactory decoderFactory = DecoderFactory.get();
@@ -33,7 +32,8 @@ public class KafkaAvroReflectDeserializer<T> extends AbstractKafkaAvroDeserializ
         readerSchema = ReflectData.get().getSchema(type);
     }
 
-    public KafkaAvroReflectDeserializer() {
+    @SuppressWarnings("unchecked")
+	public KafkaAvroReflectDeserializer() {
         Type t = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         readerSchema = ReflectData.get().getSchema((Class<T>)t);
     }
@@ -50,22 +50,24 @@ public class KafkaAvroReflectDeserializer<T> extends AbstractKafkaAvroDeserializ
 
 
     public void configure(Map<String, ?> configs, boolean isKey) {
-        this.isKey = isKey;
         this.configure(new KafkaAvroDeserializerConfig(configs));
     }
 
-    public T deserialize(String s, byte[] bytes) {
+    @SuppressWarnings("unchecked")
+	public T deserialize(String s, byte[] bytes) {
         return (T)this.deserialize(bytes);
     }
 
-    public T deserialize(String s, byte[] bytes, Schema readerSchema) {
+    @SuppressWarnings("unchecked")
+	public T deserialize(String s, byte[] bytes, Schema readerSchema) {
         return (T)this.deserialize(bytes, readerSchema);
     }
 
     public void close() {
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     protected T deserialize(
             boolean includeSchemaAndVersion,
             String topic,
@@ -89,7 +91,7 @@ public class KafkaAvroReflectDeserializer<T> extends AbstractKafkaAvroDeserializ
 
             int start = buffer.position() + buffer.arrayOffset();
             int length = buffer.limit() - 1 - idSize;
-            DatumReader<Object> reader = new ReflectDatumReader(writerSchema, readerSchema);
+            DatumReader<Object> reader = new ReflectDatumReader<Object>(writerSchema, readerSchema);
             BinaryDecoder decoder = decoderFactory.binaryDecoder(buffer.array(), start, length, null);
             return (T) reader.read(null, decoder);
         } catch (IOException e) {

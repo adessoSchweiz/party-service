@@ -1,27 +1,21 @@
-package ch.adesso.partyservice.party.entity;
+package ch.adesso.partyservice.party.event;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.UUID;
-
-/**
- * Created by tom on 11.06.17.
- */
 @Data
 @NoArgsConstructor
 @ToString
 public class CoreEvent {
-    private String streamId;
+    private String aggregateId;
     private String eventType;
     private long timestamp;
     private long sequence;
 
-    public CoreEvent(Class<?> eventType, String streamId, long sequence) {
+    public CoreEvent(Class<?> eventType, String aggregateId) {
         this.timestamp = System.nanoTime();
         this.eventType = eventType.getName();
-        this.streamId = streamId;
-        this.sequence = sequence;
+        this.aggregateId = aggregateId;
     }
 }

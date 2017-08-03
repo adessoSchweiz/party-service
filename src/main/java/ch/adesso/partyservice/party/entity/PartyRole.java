@@ -1,5 +1,8 @@
 package ch.adesso.partyservice.party.entity;
 
+import java.sql.Driver;
+
+import org.apache.avro.reflect.Nullable;
 import org.apache.avro.reflect.Union;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -10,10 +13,15 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import lombok.Data;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({ @Type(value = PostalAddress.class, name = "postalAddress"),
-		@Type(value = ElectronicAddress.class, name = "electronicAddress") })
+@JsonSubTypes({ @Type(value = Passenger.class, name = "passenger"),
+		@Type(value = Driver.class, name = "driver") })
 @Data
-@Union({PostalAddress.class, ElectronicAddress.class})
-public abstract class Address {
-    private String addressId;
+@Union({Passenger.class, Driver.class})
+public class PartyRole {
+	
+	@Nullable
+	private Party party;
+	
+	private String login;
+	private String password;
 }

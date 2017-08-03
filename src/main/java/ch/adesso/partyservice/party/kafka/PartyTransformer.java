@@ -4,8 +4,8 @@ import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.Transformer;
 import org.apache.kafka.streams.processor.ProcessorContext;
 
-import ch.adesso.partyservice.party.entity.EventEnvelope;
-import ch.adesso.partyservice.party.entity.Header;
+import ch.adesso.partyservice.party.event.EventEnvelope;
+import ch.adesso.partyservice.party.event.Header;
 
 public class PartyTransformer implements Transformer<String, EventEnvelope, KeyValue<String, EventEnvelope>> {
 

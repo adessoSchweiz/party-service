@@ -19,10 +19,10 @@ import javax.ws.rs.core.MediaType;
 
 import com.airhacks.porcupine.execution.boundary.Dedicated;
 
-import ch.adesso.partyservice.party.controller.PartyService;
-import ch.adesso.partyservice.party.entity.Person;
+import ch.adesso.partyservice.party.controller.PassengerService;
+import ch.adesso.partyservice.party.entity.Passenger;
 
-@Path("parties")
+@Path("party")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateless
@@ -33,34 +33,35 @@ public class PartyResource {
 	private ExecutorService executorService;
 	
 	@Inject
-	private PartyService partyService;
+	private PassengerService passengerService;
 	
 	@GET()
-	@Path("/test/{personId}")
-	public void testPerson(@PathParam("personId") String personId, @Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> partyService.createDummyPerson(personId))
+	@Path("/test/persons/{passengerId}")
+	public void testPerson(@PathParam("passengerId") String passengerId, @Suspended final AsyncResponse asyncResponse) {
+		supplyAsync(() -> passengerService.createDummyPassenger(passengerId))
 		.thenApply(asyncResponse::resume);
 	}
 
 	@GET()
-	@Path("/{personId}")
-	public void getPerson(@PathParam("personId") String personId, @Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> partyService.getPerson(personId))
+	@Path("/persons/{passengerId}")
+	public void getPerson(@PathParam("passengerId") String passengerId, @Suspended final AsyncResponse asyncResponse) {
+		supplyAsync(() -> passengerService.getPassenger(passengerId))
 		.thenApply(asyncResponse::resume);
 
 	}
 
 	@PUT()
-	@Path("/{personId}")
-	public void updatePerson(@PathParam("personId") String personId, Person person, @Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> partyService.updatePerson(personId, person))
+	@Path("/persons/{passengerId}")
+	public void updatePerson(@PathParam("passengerId") String passengerId, Passenger passenger, @Suspended final AsyncResponse asyncResponse) {
+		supplyAsync(() -> passengerService.updatePassenger(passengerId, passenger))
 		.thenApply(asyncResponse::resume);
 
 	}
 	
 	@POST()
-	public void createPerson(Person person, @Suspended final AsyncResponse asyncResponse)  {
-		supplyAsync(() -> partyService.createPerson(person))
+	@Path("/persons")
+	public void createPerson(Passenger passenger, @Suspended final AsyncResponse asyncResponse)  {
+		supplyAsync(() -> passengerService.createPassenger(passenger))
 		.thenApply(asyncResponse::resume);
 
 	}

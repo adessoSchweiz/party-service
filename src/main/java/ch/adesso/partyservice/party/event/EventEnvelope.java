@@ -1,9 +1,10 @@
-package ch.adesso.partyservice.party.entity;
+package ch.adesso.partyservice.party.event;
+
+import org.apache.avro.reflect.Nullable;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.apache.avro.reflect.Nullable;
 
 @NoArgsConstructor
 @ToString
