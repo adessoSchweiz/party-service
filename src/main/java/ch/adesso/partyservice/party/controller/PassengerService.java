@@ -27,7 +27,7 @@ public class PassengerService {
 	private KafkaStore kafkaStore;
 
 	public Passenger createDummyPassenger(String passengerId) {
-		Person person = new Person(null, "firstname", "lastname");
+		Person person = new Person(null, "firstname", "lastname", "1990-10-10");
 		person.addContact(new Contact(UUID.randomUUID().toString(),
 				new PostalAddress(UUID.randomUUID().toString(), "street", "12A", "Zürich", "8888", "Schweiz"),
 				ContactTypeEnum.DOMICILE));
@@ -47,7 +47,7 @@ public class PassengerService {
 		String passengerId = UUID.randomUUID().toString();
 
 		Passenger newPassenger = new Passenger(passengerId, passenger.getParty(), passenger.getLogin(),
-				passenger.getPassword(), passenger.getCredidCard());
+				passenger.getPassword(), passenger.getCreditCard());
 
 		long seq = kafkaStore.publishEvents(passengerId, 0, newPassenger.getUncommitedEvents());
 
@@ -73,7 +73,7 @@ public class PassengerService {
 		storedPassenger.applyCommand(passengerChangedCommand);
 
 		// if provided add credit card
-		CreditCard creditCard = passenger.getCredidCard();
+		CreditCard creditCard = passenger.getCreditCard();
 		if (creditCard != null) {
 			CreditCardChangedCommand creditCardChangedCommand = new CreditCardChangedCommand(passengerId, newVersion,
 					creditCard.getCardNumber(), creditCard.getCardType(), creditCard.getNameOnCard(),
@@ -88,7 +88,7 @@ public class PassengerService {
 		if (party != null) {
 			Person person = (Person) party;
 			PersonChangedCommand personChangedCommand = new PersonChangedCommand(passengerId, newVersion,
-					person.getFirstname(), person.getLastname());
+					person.getFirstname(), person.getLastname(), person.getBirthday());
 
 			storedPassenger.applyCommand(personChangedCommand);
 

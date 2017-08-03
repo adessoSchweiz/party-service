@@ -14,5 +14,5 @@ import lombok.ToString;
 public class ElectronicAddress extends Address {
 
 	private ElectronicAddressTypeEnum electronicType;
-	private String address;
+	private String value;
 }

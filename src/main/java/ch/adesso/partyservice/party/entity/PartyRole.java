@@ -11,13 +11,16 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({ @Type(value = Passenger.class, name = "passenger"),
 		@Type(value = Driver.class, name = "driver") })
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Union({Passenger.class, Driver.class})
-public class PartyRole {
+public abstract class PartyRole extends AggregateRoot {
 	
 	@Nullable
 	private Party party;

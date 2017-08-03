@@ -1,7 +1,5 @@
 package ch.adesso.partyservice.party.command;
 
-import org.apache.avro.reflect.AvroDefault;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,15 +11,14 @@ import lombok.ToString;
 @NoArgsConstructor
 public class PersonChangedCommand extends CoreCommand {
 	
-    @AvroDefault("null")
     private String firstname;
-    
-    @AvroDefault("null")
     private String lastname;
+    private String birthday;
     
-    public PersonChangedCommand( String aggregateId, long sequence, String firstname, String lastname) {
+    public PersonChangedCommand( String aggregateId, long sequence, String firstname, String lastname, String birthday) {
         super(aggregateId, sequence);
         this.firstname = firstname;
         this.lastname = lastname;
+        this.birthday = birthday;
     }
 }

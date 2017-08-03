@@ -1,16 +1,13 @@
 package ch.adesso.partyservice.party.entity;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
-import org.apache.avro.reflect.AvroDefault;
-import org.apache.avro.reflect.AvroIgnore;
 import org.apache.avro.reflect.Nullable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
-import avro.shaded.com.google.common.collect.Lists;
 import ch.adesso.partyservice.party.command.ContactChangedCommand;
 import ch.adesso.partyservice.party.command.ContactCreatedCommand;
 import ch.adesso.partyservice.party.command.CreditCardChangedCommand;
@@ -40,23 +37,17 @@ import lombok.ToString;
  *
  */
 
+@JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=Id.NAME)
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @ToString
-public class Passenger extends PartyRole implements AggregateRoot {
+public class Passenger extends PartyRole {
 
 	private String passengerId;
 
-	@AvroDefault("0")
-	private long version = 0;
-
 	@Nullable
-	private CreditCard credidCard;
-
-	@JsonIgnore
-	@AvroIgnore
-	private Collection<CoreEvent> uncommitedEvents = Lists.newArrayList();
+	private CreditCard creditCard;
 
 	public Passenger(String passengerId, Party party, String login, String password, CreditCard creditCard) {
 		super();
@@ -66,12 +57,10 @@ public class Passenger extends PartyRole implements AggregateRoot {
 		applyChange(passengerCreatedEvent);
 
 		if (party != null) {
-
-			version++;
 			// add person data
 			Person person = (Person) party;
 			PersonCreatedEvent personCreatedEvent = new PersonCreatedEvent(passengerId, person.getFirstname(),
-					person.getLastname());
+					person.getLastname(), person.getBirthday());
 
 			applyChange(personCreatedEvent);
 
@@ -112,7 +101,7 @@ public class Passenger extends PartyRole implements AggregateRoot {
 		setPassengerId(event.getAggregateId());
 		setVersion(event.getSequence());
 
-		Person person = new Person(null, event.getFirstname(), event.getLastname());
+		Person person = new Person(null, event.getFirstname(), event.getLastname(), event.getBirthday());
 		setParty(person);
 	}
 
@@ -126,7 +115,7 @@ public class Passenger extends PartyRole implements AggregateRoot {
 		setVersion(event.getSequence());
 		CreditCard creditCard = new CreditCard(event.getCardNumber(), event.getCardType(), event.getNameOnCard(),
 				event.getValidToMonth(), event.getValidToYear(), event.getSecretNumber());
-		setCredidCard(creditCard);
+		setCreditCard(creditCard);
 	}
 
 	// ----------- change events -----------//
@@ -143,11 +132,12 @@ public class Passenger extends PartyRole implements AggregateRoot {
 
 		person.setFirstname(event.getFirstname());
 		person.setLastname(event.getLastname());
+		person.setBirthday(event.getBirthday());
 	}
 
 	public void applyEvent(CreditCardChangedEvent event) {
 		setVersion(event.getSequence());
-		CreditCard creditCard = getCredidCard();
+		CreditCard creditCard = getCreditCard();
 
 		creditCard.setCardType(event.getCardType());
 		creditCard.setCardNumber(event.getCardNumber());
@@ -185,7 +175,7 @@ public class Passenger extends PartyRole implements AggregateRoot {
 
 	public void applyCommand(PersonCreatedCommand command) {
 		PersonCreatedEvent personCreatedEvent = new PersonCreatedEvent(command.getAggregateId(),
-				 command.getFirstname(), command.getLastname());
+				 command.getFirstname(), command.getLastname(), command.getBirthday());
 
 		applyChange(personCreatedEvent);
 
@@ -226,7 +216,7 @@ public class Passenger extends PartyRole implements AggregateRoot {
 				|| wasChanged(person.getLastname(), command.getLastname())) {
 
 			PersonChangedEvent personChangedEvent = new PersonChangedEvent(command.getAggregateId(),
-					 command.getFirstname(), command.getLastname());
+					 command.getFirstname(), command.getLastname(), command.getBirthday());
 
 			applyChange(personChangedEvent);
 		}
@@ -234,7 +224,7 @@ public class Passenger extends PartyRole implements AggregateRoot {
 
 	public void applyCommand(CreditCardChangedCommand command) {
 
-		CreditCard creditCard = getCredidCard();
+		CreditCard creditCard = getCreditCard();
 
 		boolean wasChanged = wasChanged(creditCard.getCardNumber(), command.getCardNumber())
 				|| wasChanged(creditCard.getCardType(), command.getCardType())
@@ -279,14 +269,6 @@ public class Passenger extends PartyRole implements AggregateRoot {
 	// --------- aggregate root ------------ //
 
 	@Override
-	public void applyChange(CoreEvent event) {
-		applyEvent(event);
-		synchronized (uncommitedEvents) {
-			uncommitedEvents.add(event);
-		}
-	}
-
-	@Override
 	public void applyEvent(CoreEvent event) {
 		System.out.println("apply CoreEvent: " + event);
 
@@ -316,13 +298,5 @@ public class Passenger extends PartyRole implements AggregateRoot {
 		}
 	}
 
-	@Override
-	public Collection<CoreEvent> getUncommitedEvents() {
-		return Collections.unmodifiableCollection(uncommitedEvents);
-	}
-
-	private boolean wasChanged(Object o1, Object o2) {
-		return o1 == null ? o2 != null : !o1.equals(o2);
-	}
 
 }

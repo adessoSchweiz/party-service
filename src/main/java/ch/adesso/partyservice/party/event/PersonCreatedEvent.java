@@ -18,10 +18,14 @@ public class PersonCreatedEvent extends PartyEvent {
     
 	@Nullable
     private String lastname;
+	
+	@Nullable
+	private String birthday;
     
-    public PersonCreatedEvent( String aggregateId, String firstname, String lastname) {
+    public PersonCreatedEvent( String aggregateId, String firstname, String lastname, String birthday) {
         super(PersonCreatedEvent.class, aggregateId);
         this.firstname = firstname;
         this.lastname = lastname;
+        this.birthday = birthday;
     }
 }

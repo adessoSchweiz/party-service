@@ -1,15 +1,43 @@
 package ch.adesso.partyservice.party.entity;
 
 import java.util.Collection;
+import java.util.Collections;
 
+import org.apache.avro.reflect.AvroDefault;
+import org.apache.avro.reflect.AvroIgnore;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import avro.shaded.com.google.common.collect.Lists;
 import ch.adesso.partyservice.party.event.CoreEvent;
+import lombok.Data;
 
-public interface AggregateRoot{
+@Data
+public abstract class AggregateRoot{
 
-	public long getVersion();
-	public Collection<CoreEvent> getUncommitedEvents();
+	@AvroDefault("0")
+	private long version = 0;
+	
+	@JsonIgnore
+	@AvroIgnore
+	private Collection<CoreEvent> uncommitedEvents = Lists.newArrayList();
 
-	public void applyEvent(final CoreEvent event);
-	public void applyChange(final CoreEvent event);
+	public abstract void applyEvent(final CoreEvent event);
+	
+	protected void applyChange(CoreEvent event) {
+		applyEvent(event);
+		synchronized (uncommitedEvents) {
+			uncommitedEvents.add(event);
+		}
+	}
+	
+	public Collection<CoreEvent> getUncommitedEvents() {
+		return Collections.unmodifiableCollection(uncommitedEvents);
+	}
+
+	protected boolean wasChanged(Object o1, Object o2) {
+		return o1 == null ? o2 != null : !o1.equals(o2);
+	}
+	
 
 }

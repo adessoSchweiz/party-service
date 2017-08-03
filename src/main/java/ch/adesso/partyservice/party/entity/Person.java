@@ -20,11 +20,15 @@ public class Person extends Party {
     
 	@Nullable
     private String lastname;
+	
+	@Nullable
+	private String birthday;
     
-    public Person(List<Contact> contacts, String firstname, String lastname) {
+    public Person(List<Contact> contacts, String firstname, String lastname, String birthday) {
 		super();
 		this.firstname = firstname;
 		this.lastname = lastname;
+		this.birthday = birthday;
 		this.setContacts(contacts);
 	}
 }
