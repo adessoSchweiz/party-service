@@ -8,14 +8,6 @@ import org.apache.avro.reflect.Nullable;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
-import ch.adesso.partyservice.party.command.ContactChangedCommand;
-import ch.adesso.partyservice.party.command.ContactCreatedCommand;
-import ch.adesso.partyservice.party.command.CreditCardChangedCommand;
-import ch.adesso.partyservice.party.command.CreditCardCreatedCommand;
-import ch.adesso.partyservice.party.command.PassengerChangedCommand;
-import ch.adesso.partyservice.party.command.PassengerCreatedCommand;
-import ch.adesso.partyservice.party.command.PersonChangedCommand;
-import ch.adesso.partyservice.party.command.PersonCreatedCommand;
 import ch.adesso.partyservice.party.event.ContactChangedEvent;
 import ch.adesso.partyservice.party.event.ContactCreatedEvent;
 import ch.adesso.partyservice.party.event.CoreEvent;
@@ -37,11 +29,11 @@ import lombok.ToString;
  *
  */
 
-@JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=Id.NAME)
+@JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = Id.NAME)
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@ToString
+@ToString(callSuper = true)
 public class Passenger extends PartyRole {
 
 	private String passengerId;
@@ -49,39 +41,31 @@ public class Passenger extends PartyRole {
 	@Nullable
 	private CreditCard creditCard;
 
-	public Passenger(String passengerId, Party party, String login, String password, CreditCard creditCard) {
-		super();
+	public Passenger(String passengerId) {
+		this.passengerId = passengerId;
+	}
 
-		PassengerCreatedEvent passengerCreatedEvent = new PassengerCreatedEvent(passengerId, login, password);
+	public void updatePassenger(Party party, String login, String password, CreditCard creditCard) {
 
-		applyChange(passengerCreatedEvent);
+		updateCredentials(login, password);
 
 		if (party != null) {
-			// add person data
 			Person person = (Person) party;
-			PersonCreatedEvent personCreatedEvent = new PersonCreatedEvent(passengerId, person.getFirstname(),
-					person.getLastname(), person.getBirthday());
 
-			applyChange(personCreatedEvent);
+			// add person data
+			updatePersonalData(person.getFirstname(), person.getLastname(), person.getBirthday());
 
 			// add contracts
 			Collection<Contact> contacts = person.getContacts();
 			if (contacts != null) {
 				contacts.forEach(c -> {
-					ContactCreatedEvent contactCreatedEvent = new ContactCreatedEvent(passengerId, c.getAddress(),
-							c.getContactType());
-
-					applyChange(contactCreatedEvent);
+					updateContact(c);
 				});
 			}
 		}
 
 		if (creditCard != null) {
-			CreditCardCreatedEvent creditCardCreatedEvent = new CreditCardCreatedEvent(passengerId,
-					creditCard.getCardNumber(), creditCard.getCardType(), creditCard.getNameOnCard(),
-					creditCard.getValidToMonth(), creditCard.getValidToYear(), creditCard.getSecretNumber());
-
-			applyChange(creditCardCreatedEvent);
+			updateCreditCard(creditCard);
 		}
 
 	}
@@ -91,14 +75,12 @@ public class Passenger extends PartyRole {
 	// ----------- create events ---------------//
 
 	public void applyEvent(PassengerCreatedEvent event) {
-		setPassengerId(event.getAggregateId());
 		setVersion(event.getSequence());
 		setLogin(event.getLogin());
 		setPassword(event.getPassword());
 	}
 
 	public void applyEvent(PersonCreatedEvent event) {
-		setPassengerId(event.getAggregateId());
 		setVersion(event.getSequence());
 
 		Person person = new Person(null, event.getFirstname(), event.getLastname(), event.getBirthday());
@@ -149,7 +131,7 @@ public class Passenger extends PartyRole {
 
 	public void applyEvent(ContactChangedEvent event) {
 		setVersion(event.getSequence());
-		
+
 		Collection<Contact> contacts = getParty().getContacts();
 
 		Contact contact = contacts.stream().filter(c -> c.getContactId().equals(event.getContactId())).findFirst()
@@ -165,112 +147,109 @@ public class Passenger extends PartyRole {
 
 	// --------- create commands ------------//
 
-	public void applyCommand(PassengerCreatedCommand command) {
-		PassengerCreatedEvent passengerCreatedEvent = new PassengerCreatedEvent(command.getAggregateId(),
-				 command.getLogin(), command.getPassword());
+	public void updateCredentials(String login, String password) {
+		if (getLogin() == null) {
+			PassengerCreatedEvent passengerCreatedEvent = new PassengerCreatedEvent(getPassengerId(), login, password);
 
-		applyChange(passengerCreatedEvent);
+			applyChange(passengerCreatedEvent);
+		} else if (wasChanged(getLogin(), login) || wasChanged(getPassword(), password)) {
 
-	}
-
-	public void applyCommand(PersonCreatedCommand command) {
-		PersonCreatedEvent personCreatedEvent = new PersonCreatedEvent(command.getAggregateId(),
-				 command.getFirstname(), command.getLastname(), command.getBirthday());
-
-		applyChange(personCreatedEvent);
-
-	}
-
-	public void applyCommand(CreditCardCreatedCommand command) {
-		CreditCardCreatedEvent creditCardCreatedEvent = new CreditCardCreatedEvent(command.getAggregateId(),
-				 command.getCardNumber(), command.getCardType(), command.getNameOnCard(),
-				command.getValidToMonth(), command.getValidToYear(), command.getSecretNumber());
-
-		applyChange(creditCardCreatedEvent);
-	}
-
-	public void applyCommand(ContactCreatedCommand command) {
-		ContactCreatedEvent contactCreatedEvent = new ContactCreatedEvent(command.getAggregateId(),
-				 command.getAddress(), command.getContactType());
-
-		applyChange(contactCreatedEvent);
-	}
-
-	// --------- update commands ------------//
-
-	public void applyCommand(PassengerChangedCommand command) {
-
-		if (wasChanged(getLogin(), command.getLogin()) || wasChanged(getPassword(), command.getPassword())) {
-
-			PassengerChangedEvent passengerChangedEvent = new PassengerChangedEvent(command.getAggregateId(),
-					command.getLogin(), command.getPassword());
+			PassengerChangedEvent passengerChangedEvent = new PassengerChangedEvent(getPassengerId(), login, password);
 
 			applyChange(passengerChangedEvent);
+
 		}
 	}
 
-	public void applyCommand(PersonChangedCommand command) {
+	public void updatePersonalData(String firstname, String lastname, String birthday) {
 
-		Person person = (Person) getParty();
-		if (wasChanged(person.getFirstname(), command.getFirstname())
-				|| wasChanged(person.getLastname(), command.getLastname())) {
+		if (getParty() == null) {
+			PersonCreatedEvent personCreatedEvent = new PersonCreatedEvent(getPassengerId(), firstname, lastname,
+					birthday);
 
-			PersonChangedEvent personChangedEvent = new PersonChangedEvent(command.getAggregateId(),
-					 command.getFirstname(), command.getLastname(), command.getBirthday());
+			applyChange(personCreatedEvent);
+		} else {
+			Person person = (Person) getParty();
+			if (wasChanged(person.getFirstname(), firstname) || wasChanged(person.getLastname(), lastname)
+					|| wasChanged(person.getBirthday(), birthday)) {
 
-			applyChange(personChangedEvent);
-		}
-	}
+				PersonChangedEvent personChangedEvent = new PersonChangedEvent(getPassengerId(), firstname, lastname,
+						birthday);
 
-	public void applyCommand(CreditCardChangedCommand command) {
-
-		CreditCard creditCard = getCreditCard();
-
-		boolean wasChanged = wasChanged(creditCard.getCardNumber(), command.getCardNumber())
-				|| wasChanged(creditCard.getCardType(), command.getCardType())
-				|| wasChanged(creditCard.getNameOnCard(), command.getNameOnCard())
-				|| wasChanged(creditCard.getValidToMonth(), command.getValidToMonth())
-				|| wasChanged(creditCard.getValidToYear(), command.getValidToYear())
-				|| wasChanged(creditCard.getSecretNumber(), command.getSecretNumber());
-
-		if (wasChanged) {
-			CreditCardCreatedEvent creditCardCreatedEvent = new CreditCardCreatedEvent(command.getAggregateId(),
-					 command.getCardNumber(), command.getCardType(),
-					command.getNameOnCard(), command.getValidToMonth(), command.getValidToYear(),
-					command.getSecretNumber());
-
-			applyChange(creditCardCreatedEvent);
-		}
-	}
-
-	public void applyCommand(ContactChangedCommand command) {
-
-		Collection<Contact> contacts = getParty().getContacts();
-
-		Optional<Contact> contactOp = contacts.stream().filter(c -> c.getContactId().equals(command.getContactId()))
-				.findFirst();
-
-		if (contactOp.isPresent()) {
-			Contact contact = contactOp.get();
-			boolean wasChanged = wasChanged(contact.getContactType(), command.getContactType())
-					|| wasChanged(contact.getAddress(), command.getAddress());
-
-			if (wasChanged) {
-				ContactChangedEvent contactChangedEvent = new ContactChangedEvent(command.getAggregateId(),
-						command.getContactId(), command.getAddress(),
-						command.getContactType());
-				;
-
-				applyChange(contactChangedEvent);
+				applyChange(personChangedEvent);
 			}
 		}
+
+	}
+
+	public void updateCreditCard(CreditCard creditCard) {
+		if (getCreditCard() == null) {
+			CreditCardCreatedEvent creditCardCreatedEvent = new CreditCardCreatedEvent(getPassengerId(),
+					creditCard.getCardNumber(), creditCard.getCardType(), creditCard.getNameOnCard(),
+					creditCard.getValidToMonth(), creditCard.getValidToYear(), creditCard.getSecretNumber());
+
+			applyChange(creditCardCreatedEvent);
+		} else {
+			CreditCard thisCreditCard = getCreditCard();
+
+			boolean wasChanged = wasChanged(thisCreditCard.getCardNumber(), creditCard.getCardNumber())
+					|| wasChanged(thisCreditCard.getCardType(), creditCard.getCardType())
+					|| wasChanged(thisCreditCard.getNameOnCard(), creditCard.getNameOnCard())
+					|| wasChanged(thisCreditCard.getValidToMonth(), creditCard.getValidToMonth())
+					|| wasChanged(thisCreditCard.getValidToYear(), creditCard.getValidToYear())
+					|| wasChanged(thisCreditCard.getSecretNumber(), creditCard.getSecretNumber());
+
+			if (wasChanged) {
+				CreditCardCreatedEvent creditCardCreatedEvent = new CreditCardCreatedEvent(getPassengerId(),
+						creditCard.getCardNumber(), creditCard.getCardType(), creditCard.getNameOnCard(),
+						creditCard.getValidToMonth(), creditCard.getValidToYear(), creditCard.getSecretNumber());
+
+				applyChange(creditCardCreatedEvent);
+			}
+		}
+	}
+
+	public void updateContact(Contact contact) {
+		if (getParty() == null) {
+			// create data holder, the create person event could came later
+			setParty(new Person());
+		}
+
+		if (getParty().getContacts() == null || getParty().getContacts().size() == 0) {
+			ContactCreatedEvent contactCreatedEvent = new ContactCreatedEvent(getPassengerId(), contact.getAddress(),
+					contact.getContactType());
+
+			applyChange(contactCreatedEvent);
+		} else {
+			Collection<Contact> contacts = getParty().getContacts();
+
+			Optional<Contact> contactOp = contacts.stream().filter(c -> c.getContactId().equals(contact.getContactId()))
+					.findFirst();
+
+
+			if (contactOp.isPresent()) {
+				Contact thisContact = contactOp.get();
+				boolean wasChanged = wasChanged(thisContact.getContactType(), contact.getContactType())
+						|| wasChanged(thisContact.getAddress(), contact.getAddress());
+
+
+				if (wasChanged) {
+					ContactChangedEvent contactChangedEvent = new ContactChangedEvent(getPassengerId(),
+							contact.getContactId(), contact.getAddress(), contact.getContactType());
+
+					applyChange(contactChangedEvent);
+				}
+			}
+		}
+
 	}
 
 	// --------- aggregate root ------------ //
 
 	@Override
 	public void applyEvent(CoreEvent event) {
-		System.out.println("apply CoreEvent: " + event);
+
+		setVersion(event.getSequence());
 
 		if (event instanceof PassengerCreatedEvent) {
 			applyEvent((PassengerCreatedEvent) event);
@@ -297,6 +276,5 @@ public class Passenger extends PartyRole {
 			applyEvent((ContactChangedEvent) event);
 		}
 	}
-
 
 }

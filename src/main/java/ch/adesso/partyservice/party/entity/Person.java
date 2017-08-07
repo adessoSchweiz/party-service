@@ -12,7 +12,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper=true)
 @NoArgsConstructor
-@ToString
+@ToString(callSuper=true)
 public class Person extends Party {
 
 	@Nullable

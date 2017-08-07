@@ -9,7 +9,7 @@ import lombok.ToString;
 
 @Data
 @EqualsAndHashCode(callSuper=true)
-@ToString
+@ToString(callSuper=true)
 @NoArgsConstructor
 public class PersonChangedEvent extends PartyEvent {
 	

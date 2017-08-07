@@ -10,7 +10,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper=true)
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(callSuper=true)
 public class ElectronicAddress extends Address {
 
 	private ElectronicAddressTypeEnum electronicType;

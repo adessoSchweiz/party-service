@@ -5,15 +5,14 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.enterprise.inject.Produces;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 
+@Startup
 @Singleton
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class KafkaProducerProvider {
 
 	private KafkaProducer<String, Object> producer;

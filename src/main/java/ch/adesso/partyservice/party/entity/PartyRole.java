@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
@@ -19,6 +20,7 @@ import lombok.EqualsAndHashCode;
 		@Type(value = Driver.class, name = "driver") })
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper=true)
 @Union({Passenger.class, Driver.class})
 public abstract class PartyRole extends AggregateRoot {
 	

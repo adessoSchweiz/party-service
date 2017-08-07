@@ -91,11 +91,12 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
-        <kafka.version>0.10.2.1</kafka.version>
-        <confluent.version>3.2.1</confluent.version>
+
+<!--         <kafka.version>0.10.2.1</kafka.version> -->
+<!--         <confluent.version>3.2.1</confluent.version> -->
         
-<!--         <kafka.version>0.11.0.0</kafka.version> -->
-<!--         <confluent.version>3.3.0</confluent.version> -->
+        <kafka.version>0.11.0.0</kafka.version>
+        <confluent.version>3.3.0</confluent.version>
         <avro.version>1.8.2</avro.version>
         <party-utils.version>0.0.1-SNAPSHOT</party-utils.version>
         <lombork.version>1.16.16</lombork.version>

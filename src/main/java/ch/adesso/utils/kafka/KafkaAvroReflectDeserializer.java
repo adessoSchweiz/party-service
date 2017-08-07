@@ -20,9 +20,6 @@ import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientExcept
 import io.confluent.kafka.serializers.AbstractKafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 
-/**
- * Extends deserializer to support ReflectData.
- */
 public class KafkaAvroReflectDeserializer<T> extends AbstractKafkaAvroDeserializer implements Deserializer<T> {
 
     private Schema readerSchema;
@@ -87,7 +84,7 @@ public class KafkaAvroReflectDeserializer<T> extends AbstractKafkaAvroDeserializ
             }
 
             schemaId = buffer.getInt();
-            Schema writerSchema = schemaRegistry.getByID(schemaId);
+            Schema writerSchema = schemaRegistry.getById(schemaId);
 
             int start = buffer.position() + buffer.arrayOffset();
             int length = buffer.limit() - 1 - idSize;

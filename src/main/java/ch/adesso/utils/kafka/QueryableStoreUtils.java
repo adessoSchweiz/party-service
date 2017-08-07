@@ -11,15 +11,20 @@ public class QueryableStoreUtils {
 
 	public static <T> T waitUntilStoreIsQueryable(final String storeName,
 			final QueryableStoreType<T> queryableStoreType, final KafkaStreams streams) throws InterruptedException {
-		while (true) {
+		
+		int loop = 0;
+		while (loop < 10) {
 			try {
 				return streams.store(storeName, queryableStoreType);
 			} catch (InvalidStateStoreException ignored) {
 				Collection<StreamsMetadata> hosts = streams.allMetadataForStore(storeName);
-				System.out.println("store not yet ready for querying");
+				System.out.println("store not yet ready for querying ");
+				ignored.printStackTrace();
 				hosts.forEach(metaData -> System.out.println(metaData.host() + ":" + metaData.port()));
-				Thread.sleep(50);
+				Thread.sleep(5000);
+				loop++;
 			}
 		}
+		return streams.store(storeName, queryableStoreType);
 	}
 }
