@@ -50,7 +50,7 @@ public class PartyResource {
 	@Path("/persons/{personId}/{version}")
 	public void getPerson(@PathParam("personId") String personId, @PathParam("version") Long version,
 			@Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> passengerService.getPersonWithVersion(personId, version), executorService)
+		supplyAsync(() -> passengerService.findPersonWithVersion(personId, version), executorService)
 				.thenApply(asyncResponse::resume).exceptionally(ex -> asyncResponse.resume(new ErrorInfo(ex).build()));
 
 	}
@@ -58,7 +58,7 @@ public class PartyResource {
 	@GET()
 	@Path("/persons/{personId}")
 	public void getPerson(@PathParam("personId") String personId, @Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> passengerService.getPerson(personId), executorService).thenApply(asyncResponse::resume)
+		supplyAsync(() -> passengerService.findPersonById(personId), executorService).thenApply(asyncResponse::resume)
 				.exceptionally(ex -> asyncResponse.resume(new ErrorInfo(ex).build()));
 
 	}
@@ -66,7 +66,7 @@ public class PartyResource {
 	@POST()
 	@Path("/persons/login")
 	public void getPersonByLogin(Credentials credentials, @Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> passengerService.getPersonByLogin(credentials.getLogin(), credentials.getPassword()),
+		supplyAsync(() -> passengerService.findPersonByLogin(credentials.getLogin(), credentials.getPassword()),
 				executorService).thenApply(asyncResponse::resume)
 						.exceptionally(ex -> asyncResponse.resume(new ErrorInfo(ex).build()));
 
@@ -88,5 +88,4 @@ public class PartyResource {
 				.exceptionally(ex -> asyncResponse.resume(new ErrorInfo(ex).build()));
 
 	}
-
 }

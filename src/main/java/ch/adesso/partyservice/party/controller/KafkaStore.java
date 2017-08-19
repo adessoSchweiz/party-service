@@ -81,30 +81,12 @@ public class KafkaStore {
 
 	public <T extends AggregateRoot> T findByIdAndVersion(String id, long version, Class<T> partyClazz) {
 
-		T aggregateRoot = null;
-		int loop = 0;
-		int elapsedTime = 0;
-		while (loop < 5) {
-			aggregateRoot = (T) findById(id, partyClazz);
-			if (aggregateRoot != null && aggregateRoot.getVersion() == version) {
-				return aggregateRoot;
-			} else {
-				try {
-					loop = loop + 1;
-					Thread.sleep(readMilis * loop);
-					elapsedTime = elapsedTime + readMilis * loop;
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+		T aggregateRoot = (T) findById(id, partyClazz);
+		if (aggregateRoot != null && aggregateRoot.getVersion() == version) {
+			return aggregateRoot;
 		}
 
-		if (aggregateRoot != null) {
-			System.out.println("AggregateRoot found but wrong version: " + aggregateRoot);
-		}
-		throw new EntityNotFoundException(
-				"Could not find entity: " + id + ", version: " + version + ", elapsed time: " + elapsedTime);
+		throw new EntityNotFoundException("Could not find Entity for ID: " + id + ", and Version: " + version);
 	}
 
 	public PartyEventStream loadLastEvents(String aggregateId, String storeName) {
@@ -123,12 +105,11 @@ public class KafkaStore {
 	public <T extends AggregateRoot> T findById(String id, Class<T> partyClass) {
 		PartyEventStream stream = loadLastEvents(id, Topics.PARTY_STORE.getTopic());
 		if (stream == null) {
-			return null;
+			throw new EntityNotFoundException("Could not find Entity for ID: " + id);
 		}
 
-		T party;
 		try {
-			party = partyClass.newInstance();
+			T party = partyClass.newInstance();
 			stream.getLastEvents().values().stream()
 					.sorted((e1, e2) -> Long.compare(e1.getSequence(), e2.getSequence())).forEach(party::applyEvent);
 
@@ -140,10 +121,47 @@ public class KafkaStore {
 		return null;
 	}
 
+	public <T extends AggregateRoot> T findByIdAndVersionWaitForResul(String id, long version, Class<T> partyClass) {
+		int loop = 0;
+		while (true) {
+			PartyEventStream stream = loadLastEvents(id, Topics.PARTY_STORE.getTopic());
+			if (stream == null || (stream.getAggregateVersion() != version)) {
+				loop++;
+				if (loop > 20) {
+					break;
+				}
+				try {
+					Thread.sleep(20);
+					continue;
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					break;
+				}
+
+			} else {
+
+				try {
+					T party = partyClass.newInstance();
+					stream.getLastEvents().values().stream()
+							.sorted((e1, e2) -> Long.compare(e1.getSequence(), e2.getSequence()))
+							.forEach(party::applyEvent);
+
+					return party;
+				} catch (InstantiationException | IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		throw new EntityNotFoundException("Could not find Entity for ID: " + id);
+	}
+
 	public Person findByCredentials(String login, String password) {
 		PartyEventStream stream = loadLastEvents(login, Topics.PARTY_LOGIN_STORE.getTopic());
 		if (stream == null) {
-			return null;
+			throw new EntityNotFoundException("Could not find Person for login: " + login);
 		}
 
 		Person person = new Person();

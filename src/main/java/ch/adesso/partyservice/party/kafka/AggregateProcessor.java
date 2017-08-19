@@ -47,7 +47,6 @@ public class AggregateProcessor implements Processor<String, EventEnvelope> {
 		stream.getLastEvents().put(event.getEventType(), event);
 
 		kvPartyStore.put(key, stream);
-		kvPartyStore.flush();
 
 		String login = null;
 
@@ -62,7 +61,6 @@ public class AggregateProcessor implements Processor<String, EventEnvelope> {
 
 		if (login != null) {
 			kvLoginStore.put(login, stream);
-			kvLoginStore.flush();
 		}
 
 		context.commit();

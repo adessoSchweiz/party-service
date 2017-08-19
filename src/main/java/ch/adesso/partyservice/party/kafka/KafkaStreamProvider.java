@@ -58,10 +58,10 @@ public class KafkaStreamProvider extends AbstractKafkaStreamProvider {
 
 		// local store for party aggregate
 		StateStoreSupplier<?> stateStore = Stores.create(Topics.PARTY_STORE.getTopic()).withKeys(Serdes.String())
-				.withValues(eventStreamSerde).persistent().build();
+				.withValues(eventStreamSerde).persistent().enableCaching().build();
 
 		StateStoreSupplier<?> stateStoreLogin = Stores.create(Topics.PARTY_LOGIN_STORE.getTopic())
-				.withKeys(Serdes.String()).withValues(eventStreamSerde).persistent().build();
+				.withKeys(Serdes.String()).withValues(eventStreamSerde).persistent().enableCaching().build();
 
 		builder.addStateStore(stateStore);
 		builder.addStateStore(stateStoreLogin);

@@ -7,7 +7,6 @@ import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityNotFoundException;
 
 import ch.adesso.partyservice.party.entity.Contact;
 import ch.adesso.partyservice.party.entity.ContactTypeEnum;
@@ -43,40 +42,23 @@ public class PassengerService {
 		return person;
 	}
 
-	public Person getPersonWithVersion(String personId, Long version) {
+	public Person findPersonWithVersion(String personId, Long version) {
 		Person person = null;
 		if (version == null) {
-			person = getPerson(personId);
+			person = findPersonById(personId);
 		} else {
-			person = kafkaStore.findByIdAndVersion(personId, version, Person.class);
-		}
-
-		if (person == null) {
-			throw new EntityNotFoundException("Person for Id: " + personId + " not found.");
+			person = kafkaStore.findByIdAndVersionWaitForResul(personId, version, Person.class);
 		}
 
 		return person;
 	}
 
-	public Person getPersonByLogin(String login, String password) {
-		Person person = null;
-
-		person = kafkaStore.findByCredentials(login, password);
-
-		if (person == null) {
-			throw new EntityNotFoundException("Passenger for login: " + login + " not found.");
-		}
-
-		return person;
+	public Person findPersonByLogin(String login, String password) {
+		return kafkaStore.findByCredentials(login, password);
 	}
 
-	public Person getPerson(String personId) {
-		Person person = kafkaStore.findById(personId, Person.class);
-		if (person == null) {
-			throw new EntityNotFoundException("Person for Id: " + personId + " not found.");
-		}
-
-		return person;
+	public Person findPersonById(String personId) {
+		return kafkaStore.findById(personId, Person.class);
 	}
 
 	public Person createPerson(Person person) {
@@ -104,10 +86,8 @@ public class PassengerService {
 
 	public Person updatePerson(Person person) {
 
-		Person storedPerson = kafkaStore.findByIdAndVersion(person.getId(), person.getVersion(), Person.class);
-
-		if (storedPerson.getId().equals(person.getId()) && storedPerson.getVersion() > person.getVersion()) {
-			System.out.println("storedPerson:" + storedPerson + " input: " + person);
+		Person storedPerson = kafkaStore.findById(person.getId(), Person.class);
+		if (storedPerson.getId().equals(person.getId()) && storedPerson.getVersion() != person.getVersion()) {
 			throw new ConcurrentModificationException("Concurrency Problem");
 		}
 
