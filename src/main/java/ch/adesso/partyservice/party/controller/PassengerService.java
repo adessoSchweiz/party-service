@@ -1,6 +1,5 @@
 package ch.adesso.partyservice.party.controller;
 
-import java.util.ConcurrentModificationException;
 import java.util.UUID;
 
 import javax.ejb.ConcurrencyManagement;
@@ -81,15 +80,14 @@ public class PassengerService {
 		kafkaStore.publishEvents(newPerson.getUncommitedEvents());
 		newPerson.clearEvents();
 
-		return newPerson;
+		// we ensure the data are already in the local store
+		return kafkaStore.findByIdAndVersionWaitForResul(newPerson.getId(), newPerson.getVersion(), Person.class);
 	}
 
 	public Person updatePerson(Person person) {
 
-		Person storedPerson = kafkaStore.findById(person.getId(), Person.class);
-		if (storedPerson.getId().equals(person.getId()) && storedPerson.getVersion() != person.getVersion()) {
-			throw new ConcurrentModificationException("Concurrency Problem");
-		}
+		Person storedPerson = kafkaStore.findByIdAndVersionWaitForResul(person.getId(), person.getVersion(),
+				Person.class);
 
 		storedPerson.updateCredentials(person.getLogin(), person.getPassword());
 		storedPerson.updatePersonalData(person.getFirstname(), person.getLastname(), person.getBirthday());

@@ -1,17 +1,24 @@
 package ch.adesso.partyservice.party.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
@@ -31,13 +38,14 @@ import kafka.common.KafkaException;
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class KafkaStore {
 
-	private int readMilis = 100;
-
 	@Inject
 	private KafkaProducer<String, Object> producer;
 
 	@Inject
 	private KafkaStreams kafkaStreams;
+
+	@Inject
+	Event<CoreEvent> events;
 
 	@PostConstruct
 	public void init() {
@@ -48,9 +56,15 @@ public class KafkaStore {
 		try {
 			// producer.beginTransaction();
 
+			List<CompletableFuture<RecordMetadata>> futures = new ArrayList<CompletableFuture<RecordMetadata>>();
 			for (CoreEvent e : events) {
-				publishEvent((PartyEvent) e);
+				futures.add(publishEvent((PartyEvent) e));
 			}
+
+			waitForAll(futures).exceptionally(ex -> {
+				ex.printStackTrace();
+				return null;
+			});
 
 			producer.flush();
 
@@ -62,21 +76,25 @@ public class KafkaStore {
 		}
 	}
 
-	public void publishEvent(PartyEvent event) {
+	public CompletableFuture<RecordMetadata> publishEvent(PartyEvent event) {
 		ProducerRecord<String, Object> record = new ProducerRecord<>(Topics.PARTY_EVENTS_TOPIC.getTopic(),
 				event.getAggregateId(), new EventEnvelope(event));
 
-		// Future<RecordMetadata> mdf =
-		producer.send(record);
+		CompletableFuture<RecordMetadata> f = new CompletableFuture<RecordMetadata>();
+		producer.send(record, new Callback() {
 
-		// try {
-		// RecordMetadata md = mdf.get();
-		// System.out.println("Record send, offset: " + md.offset());
-		// } catch (InterruptedException | ExecutionException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+			@Override
+			public void onCompletion(RecordMetadata metadata, Exception exception) {
+				if (exception != null) {
+					f.completeExceptionally(exception);
+				} else {
+					f.complete(metadata);
+					events.fire(event);
+				}
+			}
+		});
 
+		return f;
 	}
 
 	public <T extends AggregateRoot> T findByIdAndVersion(String id, long version, Class<T> partyClazz) {
@@ -171,4 +189,10 @@ public class KafkaStore {
 		return person;
 	}
 
+	private static <T> CompletableFuture<List<T>> waitForAll(List<CompletableFuture<T>> futures) {
+		CompletableFuture<Void> allDoneFuture = CompletableFuture
+				.allOf(futures.toArray(new CompletableFuture[futures.size()]));
+		return allDoneFuture
+				.thenApply(v -> futures.stream().map(future -> future.join()).collect(Collectors.<T>toList()));
+	}
 }

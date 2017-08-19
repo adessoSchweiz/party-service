@@ -1,13 +1,10 @@
 package ch.adesso.partyservice.party.kafka;
 
-import java.util.function.Consumer;
-
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueStore;
 
 import ch.adesso.partyservice.party.entity.PartyEventStream;
-import ch.adesso.partyservice.party.event.CoreEvent;
 import ch.adesso.partyservice.party.event.CredentialsChangedEvent;
 import ch.adesso.partyservice.party.event.EventEnvelope;
 import ch.adesso.partyservice.party.event.PartyEvent;
@@ -17,14 +14,12 @@ public class AggregateProcessor implements Processor<String, EventEnvelope> {
 	private String partyStoreName;
 	private String partyLoginStoreName;
 	private ProcessorContext context;
-	private Consumer<CoreEvent> eventConsumer;
 	private KeyValueStore<String, PartyEventStream> kvPartyStore;
 	private KeyValueStore<String, PartyEventStream> kvLoginStore;
 
-	public AggregateProcessor(String partyStoreName, String partyLoginStoreName, Consumer<CoreEvent> eventConsumer) {
+	public AggregateProcessor(String partyStoreName, String partyLoginStoreName) {
 		this.partyStoreName = partyStoreName;
 		this.partyLoginStoreName = partyLoginStoreName;
-		this.eventConsumer = eventConsumer;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -64,8 +59,6 @@ public class AggregateProcessor implements Processor<String, EventEnvelope> {
 		}
 
 		context.commit();
-
-		eventConsumer.accept(event);
 	}
 
 	@Override

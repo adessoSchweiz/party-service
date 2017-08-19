@@ -7,9 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.enterprise.event.Event;
 import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -20,7 +18,6 @@ import org.apache.kafka.streams.processor.StateStoreSupplier;
 import org.apache.kafka.streams.state.Stores;
 
 import ch.adesso.partyservice.party.entity.PartyEventStream;
-import ch.adesso.partyservice.party.event.CoreEvent;
 import ch.adesso.partyservice.party.event.EventEnvelope;
 import ch.adesso.utils.kafka.AbstractKafkaStreamProvider;
 import ch.adesso.utils.kafka.KafkaAvroReflectDeserializer;
@@ -32,9 +29,6 @@ import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 public class KafkaStreamProvider extends AbstractKafkaStreamProvider {
 
 	private String SCHEMA_REGISTRY_URL;
-
-	@Inject
-	Event<CoreEvent> events;
 
 	@Override
 	protected KStreamBuilder createStreamBuilder() {
@@ -70,8 +64,8 @@ public class KafkaStreamProvider extends AbstractKafkaStreamProvider {
 				Topics.PARTY_EVENTS_TOPIC.getTopic())
 				// aggregate event to party
 				.addProcessor("party-processor",
-						() -> new AggregateProcessor(Topics.PARTY_STORE.getTopic(), Topics.PARTY_LOGIN_STORE.getTopic(),
-								event -> events.fire(event)),
+						() -> new AggregateProcessor(Topics.PARTY_STORE.getTopic(),
+								Topics.PARTY_LOGIN_STORE.getTopic()),
 						"party-events-source")
 				// use local store
 				.connectProcessorAndStateStores("party-processor", stateStore.name(), stateStoreLogin.name());
