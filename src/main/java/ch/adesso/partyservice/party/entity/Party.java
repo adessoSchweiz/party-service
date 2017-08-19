@@ -6,37 +6,56 @@ import java.util.List;
 import org.apache.avro.reflect.Nullable;
 import org.apache.avro.reflect.Union;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-
+import avro.shaded.com.google.common.collect.Lists;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({ @Type(value = Person.class, name = "person"),
-		@Type(value = Organization.class, name = "organization") })
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Union({ Person.class, Organization.class })
-public abstract class Party {
-	
+public abstract class Party extends AggregateRoot {
+
+	@Nullable
+	private List<PartyRole> partyRoles;
+
 	@Nullable
 	private List<Contact> contacts;
+
+	public Party() {
+		partyRoles = Lists.newArrayList();
+		contacts = Lists.newArrayList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends PartyRole> T getPartyRole(Class<T> clazz) {
+		for (PartyRole r : getPartyRoles()) {
+			if (r.getClass().isAssignableFrom(clazz)) {
+				return (T) r;
+			}
+		}
+		return null;
+	}
+
+	public void addPartyRole(PartyRole partyRole) {
+		if (partyRoles == null) {
+			partyRoles = new ArrayList<>();
+		}
+		partyRoles.add(partyRole);
+	}
+
+	public void deletePartyRole(PartyRole partyRole) {
+		if (partyRoles != null) {
+			partyRoles.remove(partyRole);
+		}
+	}
 
 	public void addContact(Contact contact) {
 		if (contacts == null) {
 			contacts = new ArrayList<>();
 		}
 
-		contacts.add(contact);
-	}
-
-	public void updateContact(Contact contact) {
-		if (contacts == null) {
-			contacts = new ArrayList<>();
-		} else {
-			contacts.remove(contact);
-		}
 		contacts.add(contact);
 	}
 

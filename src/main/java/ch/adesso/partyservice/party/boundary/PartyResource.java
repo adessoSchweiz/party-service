@@ -23,7 +23,7 @@ import com.airhacks.porcupine.execution.boundary.Dedicated;
 
 import ch.adesso.partyservice.party.controller.PassengerService;
 import ch.adesso.partyservice.party.entity.Credentials;
-import ch.adesso.partyservice.party.entity.Passenger;
+import ch.adesso.partyservice.party.entity.Person;
 
 @Path("party")
 @Produces(MediaType.APPLICATION_JSON)
@@ -40,71 +40,52 @@ public class PartyResource {
 	private PassengerService passengerService;
 
 	@GET()
-	@Path("/test/persons/{passengerId}")
-	public void testPassenger(@PathParam("passengerId") String passengerId,
-			@Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> passengerService.createDummyPassenger(passengerId), executorService)
+	@Path("/test/persons/{personId}")
+	public void testPassenger(@PathParam("personId") String personId, @Suspended final AsyncResponse asyncResponse) {
+		supplyAsync(() -> passengerService.createDummyPassenger(personId), executorService)
 				.thenApply(asyncResponse::resume);
 	}
 
 	@GET()
-	@Path("/v1/persons/{passengerId}/{version}")
-	public void getPassenger(@PathParam("passengerId") String passengerId, @PathParam("version") Long version,
+	@Path("/persons/{personId}/{version}")
+	public void getPerson(@PathParam("personId") String personId, @PathParam("version") Long version,
 			@Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> passengerService.getPassengerWithVersion(passengerId, version), executorService)
+		supplyAsync(() -> passengerService.getPersonWithVersion(personId, version), executorService)
 				.thenApply(asyncResponse::resume).exceptionally(ex -> asyncResponse.resume(new ErrorInfo(ex).build()));
 
 	}
 
 	@GET()
-	@Path("/v1/persons/{passengerId}")
-	public void getPassenger(@PathParam("passengerId") String passengerId,
-			@Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> passengerService.getPassenger(passengerId), executorService).thenApply(asyncResponse::resume)
+	@Path("/persons/{personId}")
+	public void getPerson(@PathParam("personId") String personId, @Suspended final AsyncResponse asyncResponse) {
+		supplyAsync(() -> passengerService.getPerson(personId), executorService).thenApply(asyncResponse::resume)
 				.exceptionally(ex -> asyncResponse.resume(new ErrorInfo(ex).build()));
 
 	}
 
 	@POST()
-	@Path("/v1/persons/login")
-	public void getPassengerByLogin(Credentials credentials, @Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> passengerService.getPassengerByLogin(credentials.getLogin(), credentials.getPassword()),
+	@Path("/persons/login")
+	public void getPersonByLogin(Credentials credentials, @Suspended final AsyncResponse asyncResponse) {
+		supplyAsync(() -> passengerService.getPersonByLogin(credentials.getLogin(), credentials.getPassword()),
 				executorService).thenApply(asyncResponse::resume)
 						.exceptionally(ex -> asyncResponse.resume(new ErrorInfo(ex).build()));
 
 	}
 
 	@POST()
-	@Path("/v1/persons")
-	public void createPassengerV1(Passenger passenger, @Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> passengerService.createAndReturnPassenger(passenger), executorService)
-				.thenApply(asyncResponse::resume).exceptionally(ex -> asyncResponse.resume(new ErrorInfo(ex).build()));
-
-	}
-
-	@PUT()
-	@Path("/v1/persons/{passengerId}")
-	public void updatePassengerV1(@PathParam("passengerId") String passengerId, Passenger passenger,
-			@Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> passengerService.updateAndReturnPassenger(passengerId, passenger), executorService)
-				.thenApply(asyncResponse::resume).exceptionally(ex -> asyncResponse.resume(new ErrorInfo(ex)));
-
-	}
-
-	@POST()
-	@Path("/v2/persons")
-	public void createPassengerV2(Passenger passenger, @Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> passengerService.createPassenger(passenger), executorService).thenApply(asyncResponse::resume)
+	@Path("/persons")
+	public void createPerson(Person person, @Suspended final AsyncResponse asyncResponse) {
+		supplyAsync(() -> passengerService.createPerson(person), executorService).thenApply(asyncResponse::resume)
 				.exceptionally(ex -> asyncResponse.resume(new ErrorInfo(ex).build()));
 
 	}
 
 	@PUT()
-	@Path("/v2/persons/{passengerId}")
-	public void updatePassengerV2(@PathParam("passengerId") String passengerId, Passenger passenger,
+	@Path("/persons/{personId}")
+	public void updatePerson(@PathParam("personId") String personId, Person person,
 			@Suspended final AsyncResponse asyncResponse) {
-		supplyAsync(() -> passengerService.updatePassenger(passengerId, passenger), executorService)
-				.thenApply(asyncResponse::resume).exceptionally(ex -> asyncResponse.resume(new ErrorInfo(ex)));
+		supplyAsync(() -> passengerService.updatePerson(person), executorService).thenApply(asyncResponse::resume)
+				.exceptionally(ex -> asyncResponse.resume(new ErrorInfo(ex).build()));
 
 	}
 

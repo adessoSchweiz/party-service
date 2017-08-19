@@ -2,13 +2,14 @@ package ch.adesso.partyservice.party.kafka;
 
 import java.util.Collections;
 import java.util.Properties;
-import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.enterprise.event.Event;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -18,8 +19,8 @@ import org.apache.kafka.streams.kstream.KStreamBuilder;
 import org.apache.kafka.streams.processor.StateStoreSupplier;
 import org.apache.kafka.streams.state.Stores;
 
-import ch.adesso.partyservice.party.entity.AggregateRootFactory;
-import ch.adesso.partyservice.party.entity.Passenger;
+import ch.adesso.partyservice.party.entity.PartyEventStream;
+import ch.adesso.partyservice.party.event.CoreEvent;
 import ch.adesso.partyservice.party.event.EventEnvelope;
 import ch.adesso.utils.kafka.AbstractKafkaStreamProvider;
 import ch.adesso.utils.kafka.KafkaAvroReflectDeserializer;
@@ -32,6 +33,9 @@ public class KafkaStreamProvider extends AbstractKafkaStreamProvider {
 
 	private String SCHEMA_REGISTRY_URL;
 
+	@Inject
+	Event<CoreEvent> events;
+
 	@Override
 	protected KStreamBuilder createStreamBuilder() {
 
@@ -43,54 +47,34 @@ public class KafkaStreamProvider extends AbstractKafkaStreamProvider {
 				Collections.singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, SCHEMA_REGISTRY_URL),
 				false);
 
-		final Serde<Passenger> personSerde = Serdes.serdeFrom(new KafkaAvroReflectSerializer<>(),
-				new KafkaAvroReflectDeserializer<>(Passenger.class));
+		final Serde<PartyEventStream> eventStreamSerde = Serdes.serdeFrom(new KafkaAvroReflectSerializer<>(),
+				new KafkaAvroReflectDeserializer<>(PartyEventStream.class));
 
-		personSerde.configure(
+		eventStreamSerde.configure(
 				Collections.singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, SCHEMA_REGISTRY_URL),
 				false);
 
 		final KStreamBuilder builder = new KStreamBuilder();
 
-		Supplier<AggregateRootFactory<Passenger>> passengerFactory = new Supplier<AggregateRootFactory<Passenger>>() {
-
-			@Override
-			public AggregateRootFactory<Passenger> get() {
-				return new AggregateRootFactory<Passenger>() {
-
-					@Override
-					public Passenger newInstance(String aggregateId) {
-						return new Passenger(aggregateId);
-					}
-				};
-			}
-		};
-
 		// local store for party aggregate
-		StateStoreSupplier<?> stateStore = Stores.create(Topics.PASSENGER_STORE.getTopic()).withKeys(Serdes.String())
-				.withValues(personSerde).persistent().build();
+		StateStoreSupplier<?> stateStore = Stores.create(Topics.PARTY_STORE.getTopic()).withKeys(Serdes.String())
+				.withValues(eventStreamSerde).persistent().build();
 
-		StateStoreSupplier<?> stateStoreLogin = Stores.create(Topics.PASSENGER_LOGIN_STORE.getTopic())
-				.withKeys(Serdes.String()).withValues(personSerde).persistent().build();
+		StateStoreSupplier<?> stateStoreLogin = Stores.create(Topics.PARTY_LOGIN_STORE.getTopic())
+				.withKeys(Serdes.String()).withValues(eventStreamSerde).persistent().build();
 
 		builder.addStateStore(stateStore);
 		builder.addStateStore(stateStoreLogin);
 
 		builder.addSource("party-events-source", new StringDeserializer(), eventSerde.deserializer(),
-				Topics.PASSENGER_EVENTS_TOPIC.getTopic())
+				Topics.PARTY_EVENTS_TOPIC.getTopic())
 				// aggregate event to party
 				.addProcessor("party-processor",
-						() -> new AggregateProcessor<Passenger>(Topics.PASSENGER_STORE.getTopic(), passengerFactory),
+						() -> new AggregateProcessor(Topics.PARTY_STORE.getTopic(), Topics.PARTY_LOGIN_STORE.getTopic(),
+								event -> events.fire(event)),
 						"party-events-source")
-
-				.addProcessor("party-login-processor",
-						() -> new LoginProcessor<Passenger>(Topics.PASSENGER_STORE.getTopic(),
-								Topics.PASSENGER_LOGIN_STORE.getTopic(), passengerFactory),
-						"party-events-source")
-
 				// use local store
-				.connectProcessorAndStateStores("party-processor", stateStore.name())
-				.connectProcessorAndStateStores("party-login-processor", stateStore.name(), stateStoreLogin.name());
+				.connectProcessorAndStateStores("party-processor", stateStore.name(), stateStoreLogin.name());
 
 		return builder;
 	}

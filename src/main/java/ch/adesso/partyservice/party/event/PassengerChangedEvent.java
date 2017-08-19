@@ -6,17 +6,15 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(callSuper=true)
-@ToString(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
 public class PassengerChangedEvent extends PartyEvent {
-	
-    private String login;
-    private String password;
-    
-    public PassengerChangedEvent(String aggregateId, String login, String password) {
-        super(PassengerChangedEvent.class, aggregateId);
-        this.login = login;
-        this.password = password;
-    }
+
+	private String passengerId;
+
+	public PassengerChangedEvent(String aggregateId, long sequence, String passengerId) {
+		super(PassengerChangedEvent.class, aggregateId, sequence);
+		this.passengerId = passengerId;
+	}
 }

@@ -1,7 +1,6 @@
 package ch.adesso.partyservice.party.controller;
 
 import java.util.ConcurrentModificationException;
-import java.util.List;
 import java.util.UUID;
 
 import javax.ejb.ConcurrencyManagement;
@@ -10,12 +9,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 
-import ch.adesso.partyservice.party.entity.AggregateRootId;
 import ch.adesso.partyservice.party.entity.Contact;
 import ch.adesso.partyservice.party.entity.ContactTypeEnum;
 import ch.adesso.partyservice.party.entity.CreditCard;
 import ch.adesso.partyservice.party.entity.CreditCardTypeEnum;
-import ch.adesso.partyservice.party.entity.Party;
 import ch.adesso.partyservice.party.entity.Passenger;
 import ch.adesso.partyservice.party.entity.Person;
 import ch.adesso.partyservice.party.entity.PostalAddress;
@@ -27,115 +24,109 @@ public class PassengerService {
 	@Inject
 	private KafkaStore kafkaStore;
 
-	public Passenger createDummyPassenger(String passengerId) {
-		Person person = new Person(null, "firstname", "lastname", "1990-10-10");
-		person.addContact(new Contact(UUID.randomUUID().toString(),
+	public Person createDummyPassenger(String personId) {
+		Person person = new Person(personId);
+		person.updatePersonalData("firstname", "lastname", "12-12-2000");
+		person.updateCredentials("login", "password");
+		Passenger passenger = new Passenger(null, person);
+		person.updatePartyRole(passenger);
+
+		Contact contact = new Contact(null,
 				new PostalAddress(UUID.randomUUID().toString(), "street", "12A", "Zürich", "8888", "Schweiz"),
-				ContactTypeEnum.DOMICILE));
+				ContactTypeEnum.DOMICILE);
+
+		person.updateContact(contact);
 
 		CreditCard cCard = new CreditCard("123333", CreditCardTypeEnum.VISA, "owner", 2, 2020, 121);
-		Passenger passenger = new Passenger(UUID.randomUUID().toString());
-		passenger.updatePassenger(person, "login", "password", cCard);
+		person.updateCreditCard(cCard);
 
-		return passenger;
+		return person;
 	}
 
-	public Passenger getPassengerWithVersion(String passengerId, Long version) {
-		Passenger passenger = null;
+	public Person getPersonWithVersion(String personId, Long version) {
+		Person person = null;
 		if (version == null) {
-			passenger = getPassenger(passengerId);
+			person = getPerson(personId);
 		} else {
-			passenger = kafkaStore.findByIdAndVersion(passengerId, version);
+			person = kafkaStore.findByIdAndVersion(personId, version, Person.class);
 		}
 
-		if (passenger == null) {
-			throw new EntityNotFoundException("Passenger for Id: " + passengerId + " not found.");
+		if (person == null) {
+			throw new EntityNotFoundException("Person for Id: " + personId + " not found.");
 		}
 
-		return passenger;
+		return person;
 	}
 
-	public Passenger getPassengerByLogin(String login, String password) {
-		Passenger passenger = null;
+	public Person getPersonByLogin(String login, String password) {
+		Person person = null;
 
-		passenger = kafkaStore.findByCredentials(login, password);
+		person = kafkaStore.findByCredentials(login, password);
 
-		if (passenger == null) {
+		if (person == null) {
 			throw new EntityNotFoundException("Passenger for login: " + login + " not found.");
 		}
 
-		return passenger;
+		return person;
 	}
 
-	public Passenger getPassenger(String passengerId) {
-		Passenger passenger = kafkaStore.findById(passengerId);
-		if (passenger == null) {
-			throw new EntityNotFoundException("Passenger for Id: " + passengerId + " not found.");
+	public Person getPerson(String personId) {
+		Person person = kafkaStore.findById(personId, Person.class);
+		if (person == null) {
+			throw new EntityNotFoundException("Person for Id: " + personId + " not found.");
 		}
 
-		return passenger;
+		return person;
 	}
 
-	public Passenger createAndReturnPassenger(Passenger passenger) {
-		AggregateRootId rootId = createPassenger(passenger);
-		return kafkaStore.findByIdAndVersion(rootId.getId(), rootId.getVersion());
+	public Person createPerson(Person person) {
+
+		String personId = UUID.randomUUID().toString();
+		Person newPerson = new Person(personId);
+		newPerson.updatePersonalData(person.getFirstname(), person.getLastname(), person.getBirthday());
+		newPerson.updateCredentials(person.getLogin(), person.getPassword());
+
+		// roles
+		if (person.getPartyRoles() != null) {
+			person.getPartyRoles().forEach(newPerson::updatePartyRole);
+		}
+
+		// contacts
+		if (person.getContacts() != null) {
+			person.getContacts().forEach(newPerson::updateContact);
+		}
+
+		kafkaStore.publishEvents(newPerson.getUncommitedEvents());
+		newPerson.clearEvents();
+
+		return newPerson;
 	}
 
-	public AggregateRootId createPassenger(Passenger passenger) {
+	public Person updatePerson(Person person) {
 
-		String passengerId = UUID.randomUUID().toString();
-		Passenger newPassenger = new Passenger(passengerId);
-		newPassenger.updatePassenger(passenger.getParty(), passenger.getLogin(), passenger.getPassword(),
-				passenger.getCreditCard());
+		Person storedPerson = kafkaStore.findByIdAndVersion(person.getId(), person.getVersion(), Person.class);
 
-		long version = kafkaStore.publishEvents(passengerId, 0, newPassenger.getUncommitedEvents());
-		return new AggregateRootId(passengerId, version);
-	}
-
-	public Passenger updateAndReturnPassenger(String passengerId, Passenger passenger) {
-		AggregateRootId rootId = updatePassenger(passengerId, passenger);
-		return kafkaStore.findByIdAndVersion(rootId.getId(), rootId.getVersion());
-	}
-
-	public AggregateRootId updatePassenger(String passengerId, Passenger passenger) {
-
-		Passenger storedPassenger = kafkaStore.findByIdAndVersion(passengerId, passenger.getVersion());
-
-		if (storedPassenger.getPassengerId().equals(passenger.getPassengerId())
-				&& storedPassenger.getVersion() > passenger.getVersion()) {
-			System.out.println("storedPassenger:" + storedPassenger + " input: " + passenger);
+		if (storedPerson.getId().equals(person.getId()) && storedPerson.getVersion() > person.getVersion()) {
+			System.out.println("storedPerson:" + storedPerson + " input: " + person);
 			throw new ConcurrentModificationException("Concurrency Problem");
 		}
 
-		long newVersion = passenger.getVersion() + 1;
+		storedPerson.updateCredentials(person.getLogin(), person.getPassword());
+		storedPerson.updatePersonalData(person.getFirstname(), person.getLastname(), person.getBirthday());
 
-		storedPassenger.updateCredentials(passenger.getLogin(), passenger.getPassword());
-
-		// if provided add credit card
-		CreditCard creditCard = passenger.getCreditCard();
-		if (creditCard != null) {
-			storedPassenger.updateCreditCard(creditCard);
+		// roles
+		if (person.getPartyRoles() != null) {
+			person.getPartyRoles().forEach(storedPerson::updatePartyRole);
 		}
 
-		// add person data
-		Party party = passenger.getParty();
-
-		if (party != null) {
-			Person person = (Person) party;
-
-			storedPassenger.updatePersonalData(person.getFirstname(), person.getLastname(), person.getBirthday());
-
-			// add contracts
-			List<Contact> contacts = person.getContacts();
-			if (contacts != null) {
-				contacts.forEach(c -> {
-					storedPassenger.updateContact(c);
-				});
-			}
+		// contacts
+		if (person.getContacts() != null) {
+			person.getContacts().forEach(storedPerson::updateContact);
 		}
 
-		long version = kafkaStore.publishEvents(passengerId, newVersion, storedPassenger.getUncommitedEvents());
-		return new AggregateRootId(passengerId, version);
+		kafkaStore.publishEvents(storedPerson.getUncommitedEvents());
+		storedPerson.clearEvents();
+
+		return storedPerson;
 	}
-
 }

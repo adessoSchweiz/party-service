@@ -17,6 +17,8 @@ import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 
 import ch.adesso.partyservice.party.entity.AggregateRoot;
+import ch.adesso.partyservice.party.entity.PartyEventStream;
+import ch.adesso.partyservice.party.entity.Person;
 import ch.adesso.partyservice.party.event.CoreEvent;
 import ch.adesso.partyservice.party.event.EventEnvelope;
 import ch.adesso.partyservice.party.event.PartyEvent;
@@ -42,23 +44,17 @@ public class KafkaStore {
 		// producer.initTransactions();
 	}
 
-	public long publishEvents(String id, long fromVersion, Collection<CoreEvent> events) {
+	public void publishEvents(Collection<CoreEvent> events) {
 		try {
 			// producer.beginTransaction();
 
-			long seq = fromVersion;
 			for (CoreEvent e : events) {
-				e.setSequence(seq);
-				publishEvent(id, (PartyEvent) e);
-				seq++;
+				publishEvent((PartyEvent) e);
 			}
 
 			producer.flush();
 
 			// producer.commitTransaction();
-
-			seq--;
-			return seq;
 
 		} catch (KafkaException e) {
 			// producer.abortTransaction();
@@ -66,9 +62,9 @@ public class KafkaStore {
 		}
 	}
 
-	public void publishEvent(String id, PartyEvent event) {
-		ProducerRecord<String, Object> record = new ProducerRecord<>(Topics.PASSENGER_EVENTS_TOPIC.getTopic(), id,
-				new EventEnvelope(event));
+	public void publishEvent(PartyEvent event) {
+		ProducerRecord<String, Object> record = new ProducerRecord<>(Topics.PARTY_EVENTS_TOPIC.getTopic(),
+				event.getAggregateId(), new EventEnvelope(event));
 
 		// Future<RecordMetadata> mdf =
 		producer.send(record);
@@ -83,14 +79,14 @@ public class KafkaStore {
 
 	}
 
-	public <T extends AggregateRoot> T findByIdAndVersion(String id, long expectedVersion) {
+	public <T extends AggregateRoot> T findByIdAndVersion(String id, long version, Class<T> partyClazz) {
 
 		T aggregateRoot = null;
 		int loop = 0;
 		int elapsedTime = 0;
 		while (loop < 5) {
-			aggregateRoot = findById(id);
-			if (aggregateRoot != null && aggregateRoot.getVersion() == expectedVersion) {
+			aggregateRoot = (T) findById(id, partyClazz);
+			if (aggregateRoot != null && aggregateRoot.getVersion() == version) {
 				return aggregateRoot;
 			} else {
 				try {
@@ -108,32 +104,53 @@ public class KafkaStore {
 			System.out.println("AggregateRoot found but wrong version: " + aggregateRoot);
 		}
 		throw new EntityNotFoundException(
-				"Could not find entity: " + id + ", version: " + expectedVersion + ", elapsed time: " + elapsedTime);
+				"Could not find entity: " + id + ", version: " + version + ", elapsed time: " + elapsedTime);
 	}
 
-	public <T extends AggregateRoot> T findById(String id) {
+	public PartyEventStream loadLastEvents(String aggregateId, String storeName) {
 		try {
-			ReadOnlyKeyValueStore<String, T> store = QueryableStoreUtils.waitUntilStoreIsQueryable(
-					Topics.PASSENGER_STORE.getTopic(), QueryableStoreTypes.<String, T>keyValueStore(), kafkaStreams);
+			ReadOnlyKeyValueStore<String, PartyEventStream> store = QueryableStoreUtils.waitUntilStoreIsQueryable(
+					storeName, QueryableStoreTypes.<String, PartyEventStream>keyValueStore(), kafkaStreams);
 
-			return store.get(id);
+			PartyEventStream stream = store.get(aggregateId);
+			return stream;
 
 		} catch (InterruptedException e) {
 			throw new KafkaException("KeyValueStore can not read current data.", e);
 		}
 	}
 
-	public <T extends AggregateRoot> T findByCredentials(String login, String password) {
-		try {
-			ReadOnlyKeyValueStore<String, T> store = QueryableStoreUtils.waitUntilStoreIsQueryable(
-					Topics.PASSENGER_LOGIN_STORE.getTopic(), QueryableStoreTypes.<String, T>keyValueStore(),
-					kafkaStreams);
-
-			return store.get(login + password);
-
-		} catch (InterruptedException e) {
-			throw new KafkaException("KeyValueStore can not read current data.", e);
+	public <T extends AggregateRoot> T findById(String id, Class<T> partyClass) {
+		PartyEventStream stream = loadLastEvents(id, Topics.PARTY_STORE.getTopic());
+		if (stream == null) {
+			return null;
 		}
+
+		T party;
+		try {
+			party = partyClass.newInstance();
+			stream.getLastEvents().values().stream()
+					.sorted((e1, e2) -> Long.compare(e1.getSequence(), e2.getSequence())).forEach(party::applyEvent);
+
+			return party;
+		} catch (InstantiationException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public Person findByCredentials(String login, String password) {
+		PartyEventStream stream = loadLastEvents(login, Topics.PARTY_LOGIN_STORE.getTopic());
+		if (stream == null) {
+			return null;
+		}
+
+		Person person = new Person();
+		stream.getLastEvents().values().stream().sorted((e1, e2) -> Long.compare(e1.getSequence(), e2.getSequence()))
+				.forEach(person::applyEvent);
+
+		return person;
 	}
 
 }

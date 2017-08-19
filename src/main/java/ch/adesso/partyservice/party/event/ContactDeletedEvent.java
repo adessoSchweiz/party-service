@@ -6,16 +6,16 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(callSuper=true)
-@ToString(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
 public class ContactDeletedEvent extends PartyEvent {
 
 	private String contactId;
-	
-	public ContactDeletedEvent(String aggregateId, String contactId) {
-		super(ContactDeletedEvent.class, aggregateId);
+
+	public ContactDeletedEvent(String aggregateId, long sequence, String contactId) {
+		super(ContactDeletedEvent.class, aggregateId, sequence);
 		this.contactId = contactId;
 	}
-	
+
 }

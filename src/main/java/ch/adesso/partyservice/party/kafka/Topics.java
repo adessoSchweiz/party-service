@@ -2,10 +2,10 @@ package ch.adesso.partyservice.party.kafka;
 
 public enum Topics {
 
-	PASSENGER_EVENTS_TOPIC("passenger-events-v1"),
-	PASSENGER_TOPIC("passenger-v1"),
-	PASSENGER_STORE("passenger-store"),
-	PASSENGER_LOGIN_STORE("passenger-login-store");
+	PARTY_EVENTS_TOPIC("party-events-v1"),
+	PARTY_TOPIC("party-v1"),
+	PARTY_STORE("party-store"),
+	PARTY_LOGIN_STORE("party-login-store");
 	
 	
 	private String topic;

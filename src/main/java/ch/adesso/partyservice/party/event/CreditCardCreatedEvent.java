@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(callSuper=true)
-@ToString(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
 public class CreditCardCreatedEvent extends PartyEvent {
 
@@ -19,10 +19,9 @@ public class CreditCardCreatedEvent extends PartyEvent {
 	private int validToYear;
 	private int secretNumber;
 
-	public CreditCardCreatedEvent(String aggregateId,
-			String cardNumber, CreditCardTypeEnum cardType, String nameOnCard, int validToMonth, int validToYear,
-			int secretNumber) {
-		super(CreditCardCreatedEvent.class, aggregateId);
+	public CreditCardCreatedEvent(String aggregateId, long sequence, String cardNumber, CreditCardTypeEnum cardType,
+			String nameOnCard, int validToMonth, int validToYear, int secretNumber) {
+		super(CreditCardCreatedEvent.class, aggregateId, sequence);
 		this.cardNumber = cardNumber;
 		this.cardType = cardType;
 		this.nameOnCard = nameOnCard;
@@ -30,6 +29,5 @@ public class CreditCardCreatedEvent extends PartyEvent {
 		this.validToYear = validToYear;
 		this.secretNumber = secretNumber;
 	}
-    
 
 }

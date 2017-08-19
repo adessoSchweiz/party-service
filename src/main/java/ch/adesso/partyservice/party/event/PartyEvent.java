@@ -12,17 +12,17 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(callSuper=true)
 @Union({PassengerCreatedEvent.class,
-		PassengerChangedEvent.class,
 		PersonCreatedEvent.class, 
 		PersonChangedEvent.class,
 		CreditCardCreatedEvent.class,
 		CreditCardChangedEvent.class,
 		ContactCreatedEvent.class,
 		ContactChangedEvent.class,
-		ContactDeletedEvent.class})
+		ContactDeletedEvent.class,
+		CredentialsChangedEvent.class})
 public class PartyEvent extends CoreEvent {
 
-    public PartyEvent(Class<?> eventType, String aggregateId) {
-        super(eventType, aggregateId);
+    public PartyEvent(Class<?> eventType, String aggregateId, long sequence) {
+        super(eventType, aggregateId, sequence);
     }
 }

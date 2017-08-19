@@ -1,67 +1,73 @@
 package ch.adesso.partyservice.party.kafka;
 
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueStore;
 
-import ch.adesso.partyservice.party.entity.AggregateRoot;
-import ch.adesso.partyservice.party.entity.AggregateRootFactory;
+import ch.adesso.partyservice.party.entity.PartyEventStream;
 import ch.adesso.partyservice.party.event.CoreEvent;
+import ch.adesso.partyservice.party.event.CredentialsChangedEvent;
 import ch.adesso.partyservice.party.event.EventEnvelope;
+import ch.adesso.partyservice.party.event.PartyEvent;
 
-public class AggregateProcessor<T extends AggregateRoot> implements Processor<String, EventEnvelope> {
+public class AggregateProcessor implements Processor<String, EventEnvelope> {
 
-	private String storeName;
-	Supplier<AggregateRootFactory<T>> aggregateRootFactoryProvider;
+	private String partyStoreName;
+	private String partyLoginStoreName;
 	private ProcessorContext context;
-	private KeyValueStore<String, T> kvStore;
+	private Consumer<CoreEvent> eventConsumer;
+	private KeyValueStore<String, PartyEventStream> kvPartyStore;
+	private KeyValueStore<String, PartyEventStream> kvLoginStore;
 
-	public AggregateProcessor(String storeName, Supplier<AggregateRootFactory<T>> aggregateRootFactoryProvider) {
-		this.storeName = storeName;
-		this.aggregateRootFactoryProvider = aggregateRootFactoryProvider;
+	public AggregateProcessor(String partyStoreName, String partyLoginStoreName, Consumer<CoreEvent> eventConsumer) {
+		this.partyStoreName = partyStoreName;
+		this.partyLoginStoreName = partyLoginStoreName;
+		this.eventConsumer = eventConsumer;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init(ProcessorContext context) {
 		this.context = context;
-		kvStore = (KeyValueStore<String, T>) context.getStateStore(storeName);
+		kvPartyStore = (KeyValueStore<String, PartyEventStream>) context.getStateStore(partyStoreName);
+		kvLoginStore = (KeyValueStore<String, PartyEventStream>) context.getStateStore(partyLoginStoreName);
 	}
 
 	@Override
 	public void process(String key, EventEnvelope value) {
-		CoreEvent event = value.getEvent();
-		T aggregateRoot = kvStore.get(key);
-		if (aggregateRoot == null) {
-			aggregateRoot = aggregateRootFactoryProvider.get().newInstance(event.getAggregateId());
+		PartyEvent event = value.getEvent();
+		PartyEventStream stream = kvPartyStore.get(key);
+		if (stream == null) {
+			stream = new PartyEventStream(event.getAggregateId());
 		}
 
-		int loopCount = 0;
-		while (loopCount < 5) {
-			try {
-				System.out.println("apply event: " + value.getEvent());
-				aggregateRoot.applyEvent(value.getEvent());
+		stream.setAggregateVersion(event.getSequence());
+		stream.getLastEvents().put(event.getEventType(), event);
 
-				kvStore.put(key, aggregateRoot);
-				kvStore.flush();
+		kvPartyStore.put(key, stream);
+		kvPartyStore.flush();
 
-				context.commit();
+		String login = null;
 
-				break;
-			} catch (Exception ex) {
-				System.out.println("Error for aggregateRoot: " + aggregateRoot);
-				ex.printStackTrace();
-				loopCount++;
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		if (event instanceof CredentialsChangedEvent) {
+			login = ((CredentialsChangedEvent) event).getLogin();
+		} else {
+			PartyEvent credentials = stream.getLastEvents().get(CredentialsChangedEvent.class.getName());
+			if (credentials != null) {
+				login = ((CredentialsChangedEvent) credentials).getLogin();
 			}
 		}
+
+		if (login != null) {
+			kvLoginStore.put(login, stream);
+			kvLoginStore.flush();
+		}
+
+		context.commit();
+
+		eventConsumer.accept(event);
 	}
 
 	@Override
@@ -72,7 +78,8 @@ public class AggregateProcessor<T extends AggregateRoot> implements Processor<St
 
 	@Override
 	public void close() {
-		kvStore.close();
+		kvPartyStore.close();
+		kvLoginStore.close();
 	}
 
 }

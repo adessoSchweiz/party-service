@@ -12,23 +12,22 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(callSuper=true)
-@ToString(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
 public class ContactCreatedEvent extends PartyEvent {
 
 	private String contactId;
 	private Address address;
-	
+
 	@Nullable
 	private ContactTypeEnum contactType;
-	
-	public ContactCreatedEvent( String aggregateId, Address address,
-			ContactTypeEnum contactType) {
-		super(ContactCreatedEvent.class, aggregateId);
+
+	public ContactCreatedEvent(String aggregateId, long sequence, Address address, ContactTypeEnum contactType) {
+		super(ContactCreatedEvent.class, aggregateId, sequence);
 		this.contactId = UUID.randomUUID().toString();
 		this.address = address;
 		this.contactType = contactType;
 	}
-	
+
 }
