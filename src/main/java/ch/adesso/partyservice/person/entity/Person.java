@@ -28,13 +28,24 @@ public class Person extends Party {
     @Nullable
     private String birthday;
 
+    public static final class JSON_KEYS {
+        public static final String FIRSTNAME = "firstname";
+        public static final String LASTNAME = "lastname";
+        public static final String BIRTHDAY = "birthday";
+    }
+
     public JsonObject toJson() {
         return Json.createObjectBuilder()
-                .add("login", login)
-                .add("firstname", firstname)
-                .add("lastname", lastname)
-                .add("birthday", birthday)
+                .add(JSON_KEYS.FIRSTNAME, firstname)
+                .add(JSON_KEYS.LASTNAME, lastname)
+                .add(JSON_KEYS.BIRTHDAY, birthday)
                 .build();
+    }
+
+    public Person(JsonObject person) {
+        setFirstname(person.getString(JSON_KEYS.FIRSTNAME));
+        setLastname(person.getString(JSON_KEYS.LASTNAME));
+        setBirthday(person.getString(JSON_KEYS.BIRTHDAY));
     }
 
     public Person() {
