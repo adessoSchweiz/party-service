@@ -4,8 +4,6 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import java.util.concurrent.ExecutorService;
 
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -23,7 +21,7 @@ import com.airhacks.porcupine.execution.boundary.Dedicated;
 
 import ch.adesso.partyservice.party.controller.PassengerService;
 import ch.adesso.partyservice.party.entity.Credentials;
-import ch.adesso.partyservice.party.entity.Person;
+import ch.adesso.partyservice.person.entity.Person;
 
 @Path("persons")
 @Produces(MediaType.APPLICATION_JSON)

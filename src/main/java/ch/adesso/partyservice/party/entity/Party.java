@@ -3,6 +3,7 @@ package ch.adesso.partyservice.party.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.adesso.partyservice.person.entity.Person;
 import org.apache.avro.reflect.Nullable;
 import org.apache.avro.reflect.Union;
 

@@ -1,10 +1,10 @@
 package ch.adesso.partyservice;
 
-import ch.adesso.partyservice.party.entity.Person;
 import com.airhacks.rulz.jaxrsclient.JAXRSClientProvider;
 import org.junit.Rule;
 import org.junit.Test;
 
+import javax.json.JsonObject;
 import javax.ws.rs.core.MediaType;
 
 import static com.airhacks.rulz.jaxrsclient.JAXRSClientProvider.buildWithURI;
@@ -19,12 +19,12 @@ public class PersonServiceIT {
 
     @Test
     public void shouldReturnPerson() {
-        Person person = this.healthProvider
+        JsonObject person = this.healthProvider
                 .target()
                 .request(MediaType.APPLICATION_JSON)
-                .get(Person.class);
+                .get(JsonObject.class);
         System.out.println("person = " + person);
-        assertThat(person.getFirstname(), is("firstname"));
+        assertThat(person.getString("firstname"), is("firstname"));
     }
 
 

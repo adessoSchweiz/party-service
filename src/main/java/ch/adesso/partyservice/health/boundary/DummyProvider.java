@@ -1,6 +1,7 @@
 package ch.adesso.partyservice.health.boundary;
 
 import ch.adesso.partyservice.party.entity.*;
+import ch.adesso.partyservice.person.entity.Person;
 
 import java.util.UUID;
 

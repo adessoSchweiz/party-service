@@ -25,7 +25,7 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 
 import ch.adesso.partyservice.party.entity.AggregateRoot;
 import ch.adesso.partyservice.party.entity.PartyEventStream;
-import ch.adesso.partyservice.party.entity.Person;
+import ch.adesso.partyservice.person.entity.Person;
 import ch.adesso.partyservice.party.event.CoreEvent;
 import ch.adesso.partyservice.party.event.EventEnvelope;
 import ch.adesso.partyservice.party.event.PartyEvent;

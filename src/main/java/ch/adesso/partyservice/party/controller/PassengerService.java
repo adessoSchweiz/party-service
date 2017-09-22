@@ -12,7 +12,7 @@ import ch.adesso.partyservice.party.entity.ContactTypeEnum;
 import ch.adesso.partyservice.party.entity.CreditCard;
 import ch.adesso.partyservice.party.entity.CreditCardTypeEnum;
 import ch.adesso.partyservice.party.entity.Passenger;
-import ch.adesso.partyservice.party.entity.Person;
+import ch.adesso.partyservice.person.entity.Person;
 import ch.adesso.partyservice.party.entity.PostalAddress;
 
 @Stateless

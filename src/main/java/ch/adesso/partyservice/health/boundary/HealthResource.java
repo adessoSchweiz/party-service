@@ -5,7 +5,10 @@ import com.airhacks.porcupine.execution.boundary.Dedicated;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
@@ -27,9 +30,10 @@ public class HealthResource {
     @Inject
     private PassengerService passengerService;
 
-    @GET()
-    public void testPassenger( @Suspended final AsyncResponse asyncResponse) {
-        supplyAsync(() -> passengerService.createDummyPassenger(UUID.randomUUID().toString()), executorService)
+    @GET
+    public void testPassenger(@Suspended final AsyncResponse asyncResponse) {
+        supplyAsync(() -> passengerService
+                .createDummyPassenger(UUID.randomUUID().toString()).toJson(), executorService)
                 .thenApply(asyncResponse::resume);
     }
 }
