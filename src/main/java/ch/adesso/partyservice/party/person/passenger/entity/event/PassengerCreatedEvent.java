@@ -1,4 +1,4 @@
-package ch.adesso.partyservice.person.entity.event;
+package ch.adesso.partyservice.party.person.passenger.entity.event;
 
 import ch.adesso.partyservice.PartyEvent;
 import lombok.Data;

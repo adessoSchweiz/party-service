@@ -1,4 +1,4 @@
-package ch.adesso.partyservice.person.boundary;
+package ch.adesso.partyservice.party.person.passenger.boundary;
 
 import ch.adesso.partyservice.eventstore.boundary.KafkaStore;
 import ch.adesso.partyservice.person.entity.Person;
@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import java.util.UUID;
 
 @Stateless
-public class PersonService {
+public class PassengerService {
 
     @Inject
     private KafkaStore kafkaStore;

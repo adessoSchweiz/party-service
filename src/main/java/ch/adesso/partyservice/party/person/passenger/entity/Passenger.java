@@ -1,4 +1,4 @@
-package ch.adesso.partyservice.person.entity;
+package ch.adesso.partyservice.party.person.passenger.entity;
 
 import ch.adesso.partyservice.Party;
 import ch.adesso.partyservice.PartyRole;

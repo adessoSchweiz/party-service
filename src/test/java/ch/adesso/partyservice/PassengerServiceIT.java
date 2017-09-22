@@ -18,7 +18,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class PersonServiceIT {
+public class PassengerServiceIT {
     public static final String BASE_PATH = System.getenv("BASE_PATH");
 
     @Rule

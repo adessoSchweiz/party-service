@@ -2,7 +2,7 @@ package ch.adesso.partyservice;
 
 import java.sql.Driver;
 
-import ch.adesso.partyservice.person.entity.Passenger;
+import ch.adesso.partyservice.party.person.passenger.entity.Passenger;
 import org.apache.avro.reflect.AvroIgnore;
 import org.apache.avro.reflect.Nullable;
 import org.apache.avro.reflect.Union;

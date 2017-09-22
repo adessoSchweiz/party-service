@@ -1,4 +1,4 @@
-package ch.adesso.partyservice.person.boundary;
+package ch.adesso.partyservice.party.person.passenger.boundary;
 
 import ch.adesso.partyservice.person.entity.Person;
 import com.airhacks.porcupine.execution.boundary.Dedicated;
@@ -15,24 +15,24 @@ import java.util.concurrent.ExecutorService;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
-@Path("persons")
+@Path("passengers")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateless
-public class PersonsResource {
+public class PassengerResource {
 
     @Inject
     @Dedicated
     private ExecutorService personPool;
 
     @Inject
-    private PersonService personService;
+    private PassengerService passengerService;
 
     @POST
     public void createPerson(JsonObject person, @Suspended final AsyncResponse asyncResponse) {
         supplyAsync(() -> Response
                 .status(Response.Status.CREATED)
-                .entity(personService.createPerson(new Person(person)))
+                .entity(passengerService.createPerson(new Person(person)))
                 .build(), personPool)
                 .thenApply(asyncResponse::resume);
     }
@@ -40,7 +40,7 @@ public class PersonsResource {
     @PUT
     public void updatePerson(JsonObject person,
                              @Suspended final AsyncResponse asyncResponse) {
-        supplyAsync(() -> personService.updatePerson(new Person(person)), personPool)
+        supplyAsync(() -> passengerService.updatePerson(new Person(person)), personPool)
                 .thenApply(asyncResponse::resume);
     }
 }
