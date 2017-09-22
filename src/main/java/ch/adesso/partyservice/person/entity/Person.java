@@ -29,6 +29,7 @@ public class Person extends Party {
     private String birthday;
 
     public static final class JSON_KEYS {
+        public static final String ID = "id";
         public static final String FIRSTNAME = "firstname";
         public static final String LASTNAME = "lastname";
         public static final String BIRTHDAY = "birthday";
@@ -36,9 +37,10 @@ public class Person extends Party {
 
     public JsonObject toJson() {
         return Json.createObjectBuilder()
-                .add(JSON_KEYS.FIRSTNAME, firstname)
-                .add(JSON_KEYS.LASTNAME, lastname)
-                .add(JSON_KEYS.BIRTHDAY, birthday)
+                .add(JSON_KEYS.ID, getId())
+                .add(JSON_KEYS.FIRSTNAME, getFirstname())
+                .add(JSON_KEYS.LASTNAME, getLastname())
+                .add(JSON_KEYS.BIRTHDAY, getBirthday())
                 .build();
     }
 

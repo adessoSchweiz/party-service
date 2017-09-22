@@ -27,6 +27,7 @@ public class PersonServiceIT {
     private static final String FIRSTNAME = "robert";
     private static final String LASTNAME = "brem";
     private static final String BIRTHDAY = "12-12-2000";
+    private static String ID;
 
     @Test
     public void a01_shouldCreatePerson() {
@@ -42,12 +43,17 @@ public class PersonServiceIT {
                 .post(Entity.json(personToCreate));
 
         assertThat(postResponse.getStatus(), is(201));
+
+        ID = postResponse
+                .readEntity(JsonObject.class)
+                .getString(Person.JSON_KEYS.ID);
     }
 
     @Test
     public void a02_shouldReturnPersonForHealthCheck() {
         JsonObject person = this.healthProvider
                 .target()
+                .queryParam("personId", ID)
                 .request(MediaType.APPLICATION_JSON)
                 .get(JsonObject.class);
         System.out.println("person = " + person);
