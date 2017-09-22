@@ -1,11 +1,11 @@
 package ch.adesso.partyservice.configuration.boundary;
 
-import ch.adesso.partyservice.party.entity.PartyEventStream;
-import ch.adesso.partyservice.party.event.EventEnvelope;
-import ch.adesso.partyservice.party.kafka.AggregateProcessor;
-import ch.adesso.partyservice.party.kafka.Topics;
-import ch.adesso.utils.kafka.KafkaAvroReflectDeserializer;
-import ch.adesso.utils.kafka.KafkaAvroReflectSerializer;
+import ch.adesso.partyservice.PartyEventStream;
+import ch.adesso.partyservice.EventEnvelope;
+import ch.adesso.partyservice.AggregateProcessor;
+import ch.adesso.partyservice.Topics;
+import ch.adesso.partyservice.serializer.boundary.KafkaAvroReflectDeserializer;
+import ch.adesso.partyservice.serializer.boundary.KafkaAvroReflectSerializer;
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;

@@ -41,7 +41,7 @@ public class KafkaProducerProvider {
         properties.put(PROPERTY_KEYS.BOOTSTRAP_SERVERS, System.getenv("BOOTSTRAP_SERVERS")); // kafka:9092
         properties.put(PROPERTY_KEYS.SCHEMA_REGISTRY_URL, System.getenv("SCHEMA_REGISTRY_URL")); // http://avro-schema-registry:8081
         properties.put(PROPERTY_KEYS.KEY_SERIALIZER, "org.apache.kafka.common.serialization.StringSerializer");
-        properties.put(PROPERTY_KEYS.VALUE_SERIALIZER, "ch.adesso.utils.kafka.KafkaAvroReflectSerializer");
+        properties.put(PROPERTY_KEYS.VALUE_SERIALIZER, "ch.adesso.partyservice.serializer.boundary.KafkaAvroReflectSerializer");
         properties.put(PROPERTY_KEYS.LINGER_MS, 10);
         properties.put(PROPERTY_KEYS.ENABLE_IDEMPOTENCE, true);
         return new KafkaProducer<>(properties);

@@ -53,7 +53,7 @@ public class PersonServiceIT {
     }
 
     @Test
-    public void a02_shouldReturnPersonForHealthCheck() {
+    public void a02_shouldReturnPersonForHealthCheck() throws InterruptedException {
         JsonObject person = this.healthProvider
                 .target()
                 .queryParam("personId", ID)

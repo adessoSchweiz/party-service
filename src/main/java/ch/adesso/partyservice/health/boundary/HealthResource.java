@@ -1,6 +1,6 @@
 package ch.adesso.partyservice.health.boundary;
 
-import ch.adesso.partyservice.party.controller.KafkaStore;
+import ch.adesso.partyservice.eventstore.boundary.KafkaStore;
 import ch.adesso.partyservice.person.entity.Person;
 import com.airhacks.porcupine.execution.boundary.Dedicated;
 

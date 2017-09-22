@@ -1,7 +1,15 @@
 package ch.adesso.partyservice.person.entity;
 
-import ch.adesso.partyservice.party.entity.*;
-import ch.adesso.partyservice.party.event.*;
+import ch.adesso.partyservice.CoreEvent;
+import ch.adesso.partyservice.Party;
+import ch.adesso.partyservice.PartyRole;
+import ch.adesso.partyservice.contact.entity.Contact;
+import ch.adesso.partyservice.contact.entity.event.ContactChangedEvent;
+import ch.adesso.partyservice.contact.entity.event.ContactCreatedEvent;
+import ch.adesso.partyservice.creditcard.entity.event.CreditCard;
+import ch.adesso.partyservice.person.entity.event.*;
+import ch.adesso.partyservice.creditcard.entity.event.CreditCardChangedEvent;
+import ch.adesso.partyservice.creditcard.entity.event.CreditCardCreatedEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

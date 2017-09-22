@@ -1,7 +1,7 @@
 package ch.adesso.partyservice.logging.boundary;
 
-import ch.adesso.partyservice.party.event.CoreEvent;
-import ch.adesso.partyservice.party.event.PersonCreatedEvent;
+import ch.adesso.partyservice.CoreEvent;
+import ch.adesso.partyservice.person.entity.event.PersonCreatedEvent;
 
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
