@@ -31,7 +31,7 @@ public class Person extends Party {
     public JsonObject toJson() {
         return Json.createObjectBuilder()
                 .add("login", login)
-                .add("fistname", firstname)
+                .add("firstname", firstname)
                 .add("lastname", lastname)
                 .add("birthday", birthday)
                 .build();
