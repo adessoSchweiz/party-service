@@ -25,7 +25,7 @@ public class PassengerServiceIT {
     public JAXRSClientProvider healthProvider = buildWithURI(BASE_PATH + "/health");
 
     @Rule
-    public JAXRSClientProvider personProvider = buildWithURI(BASE_PATH + "/persons");
+    public JAXRSClientProvider personProvider = buildWithURI(BASE_PATH + "/passengers");
 
     private static final String FIRSTNAME = "robert";
     private static final String LASTNAME = "brem";
