@@ -1,6 +1,6 @@
 package ch.adesso.partyservice;
 
-import ch.adesso.partyservice.person.entity.Person;
+import ch.adesso.partyservice.party.person.Person;
 import com.airhacks.rulz.jaxrsclient.JAXRSClientProvider;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;

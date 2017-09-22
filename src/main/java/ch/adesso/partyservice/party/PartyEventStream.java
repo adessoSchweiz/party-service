@@ -1,4 +1,4 @@
-package ch.adesso.partyservice;
+package ch.adesso.partyservice.party;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.avro.reflect.AvroDefault;
 import org.apache.avro.reflect.Nullable;
 
-import ch.adesso.partyservice.PartyEvent;
 import lombok.Data;
 import lombok.ToString;
 

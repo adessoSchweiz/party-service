@@ -1,5 +1,7 @@
 package ch.adesso.partyservice;
 
+import ch.adesso.partyservice.party.PartyEvent;
+import ch.adesso.partyservice.party.PartyEventStream;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueStore;

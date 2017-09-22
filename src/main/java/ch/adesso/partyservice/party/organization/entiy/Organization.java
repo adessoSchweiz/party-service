@@ -1,7 +1,7 @@
-package ch.adesso.partyservice.organization.entiy;
+package ch.adesso.partyservice.party.organization.entiy;
 
 import ch.adesso.partyservice.CoreEvent;
-import ch.adesso.partyservice.Party;
+import ch.adesso.partyservice.party.Party;
 
 public class Organization extends Party {
 

@@ -1,6 +1,6 @@
 package ch.adesso.partyservice.configuration.boundary;
 
-import ch.adesso.partyservice.PartyEventStream;
+import ch.adesso.partyservice.party.PartyEventStream;
 import ch.adesso.partyservice.EventEnvelope;
 import ch.adesso.partyservice.AggregateProcessor;
 import ch.adesso.partyservice.Topics;

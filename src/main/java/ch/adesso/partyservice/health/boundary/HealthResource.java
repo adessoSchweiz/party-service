@@ -1,7 +1,7 @@
 package ch.adesso.partyservice.health.boundary;
 
 import ch.adesso.partyservice.eventstore.boundary.KafkaStore;
-import ch.adesso.partyservice.person.entity.Person;
+import ch.adesso.partyservice.party.person.Person;
 import com.airhacks.porcupine.execution.boundary.Dedicated;
 
 import javax.ejb.Stateless;

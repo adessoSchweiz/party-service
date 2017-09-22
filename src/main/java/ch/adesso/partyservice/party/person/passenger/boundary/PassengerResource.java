@@ -1,6 +1,6 @@
 package ch.adesso.partyservice.party.person.passenger.boundary;
 
-import ch.adesso.partyservice.person.entity.Person;
+import ch.adesso.partyservice.party.person.Person;
 import com.airhacks.porcupine.execution.boundary.Dedicated;
 
 import javax.ejb.Stateless;

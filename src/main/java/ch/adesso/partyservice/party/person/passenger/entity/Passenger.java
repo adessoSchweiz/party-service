@@ -1,8 +1,7 @@
 package ch.adesso.partyservice.party.person.passenger.entity;
 
-import ch.adesso.partyservice.Party;
-import ch.adesso.partyservice.PartyRole;
-import ch.adesso.partyservice.creditcard.entity.CreditCard;
+import ch.adesso.partyservice.party.Party;
+import ch.adesso.partyservice.party.PartyRole;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

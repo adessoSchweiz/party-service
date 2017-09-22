@@ -1,10 +1,10 @@
 package ch.adesso.partyservice.eventstore.boundary;
 
 import ch.adesso.partyservice.AggregateRoot;
-import ch.adesso.partyservice.PartyEventStream;
+import ch.adesso.partyservice.party.PartyEventStream;
 import ch.adesso.partyservice.CoreEvent;
 import ch.adesso.partyservice.EventEnvelope;
-import ch.adesso.partyservice.PartyEvent;
+import ch.adesso.partyservice.party.PartyEvent;
 import ch.adesso.partyservice.Topics;
 import ch.adesso.partyservice.QueryableStoreUtils;
 import kafka.common.KafkaException;

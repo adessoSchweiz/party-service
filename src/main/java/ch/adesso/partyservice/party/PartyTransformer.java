@@ -1,4 +1,4 @@
-package ch.adesso.partyservice;
+package ch.adesso.partyservice.party;
 
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.Transformer;

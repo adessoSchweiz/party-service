@@ -1,4 +1,4 @@
-package ch.adesso.partyservice;
+package ch.adesso.partyservice.party;
 
 import java.sql.Driver;
 

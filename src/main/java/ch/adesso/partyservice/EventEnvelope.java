@@ -1,5 +1,6 @@
 package ch.adesso.partyservice;
 
+import ch.adesso.partyservice.party.PartyEvent;
 import org.apache.avro.reflect.Nullable;
 
 import lombok.Data;

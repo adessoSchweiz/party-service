@@ -1,7 +1,7 @@
 package ch.adesso.partyservice.party.person.passenger.boundary;
 
 import ch.adesso.partyservice.eventstore.boundary.KafkaStore;
-import ch.adesso.partyservice.person.entity.Person;
+import ch.adesso.partyservice.party.person.Person;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;

@@ -1,14 +1,15 @@
-package ch.adesso.partyservice;
+package ch.adesso.partyservice.party;
 
-import ch.adesso.partyservice.contact.entity.event.ContactChangedEvent;
-import ch.adesso.partyservice.contact.entity.event.ContactCreatedEvent;
-import ch.adesso.partyservice.contact.entity.event.ContactDeletedEvent;
+import ch.adesso.partyservice.CoreEvent;
+import ch.adesso.partyservice.party.person.contact.entity.event.ContactChangedEvent;
+import ch.adesso.partyservice.party.person.contact.entity.event.ContactCreatedEvent;
+import ch.adesso.partyservice.party.person.contact.entity.event.ContactDeletedEvent;
 import ch.adesso.partyservice.party.person.passenger.entity.event.PassengerCreatedEvent;
 import ch.adesso.partyservice.party.person.PersonChangedEvent;
 import ch.adesso.partyservice.party.person.PersonCreatedEvent;
 import ch.adesso.partyservice.party.person.CredentialsChangedEvent;
-import ch.adesso.partyservice.creditcard.entity.event.CreditCardChangedEvent;
-import ch.adesso.partyservice.creditcard.entity.event.CreditCardCreatedEvent;
+import ch.adesso.partyservice.party.person.passenger.entity.event.CreditCardChangedEvent;
+import ch.adesso.partyservice.party.person.passenger.entity.event.CreditCardCreatedEvent;
 import org.apache.avro.reflect.Union;
 
 import lombok.Data;

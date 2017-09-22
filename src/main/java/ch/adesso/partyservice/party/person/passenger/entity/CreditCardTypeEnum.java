@@ -1,4 +1,4 @@
-package ch.adesso.partyservice.creditcard.entity;
+package ch.adesso.partyservice.party.person.passenger.entity;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 

@@ -1,4 +1,4 @@
-package ch.adesso.partyservice.contact.entity;
+package ch.adesso.partyservice.party.person.contact.entity;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;

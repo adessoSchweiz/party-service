@@ -1,8 +1,8 @@
-package ch.adesso.partyservice.contact.entity.event;
+package ch.adesso.partyservice.party.person.contact.entity.event;
 
-import ch.adesso.partyservice.PartyEvent;
-import ch.adesso.partyservice.contact.entity.Address;
-import ch.adesso.partyservice.contact.entity.ContactTypeEnum;
+import ch.adesso.partyservice.party.PartyEvent;
+import ch.adesso.partyservice.party.person.contact.entity.Address;
+import ch.adesso.partyservice.party.person.contact.entity.ContactTypeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

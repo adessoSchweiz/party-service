@@ -1,6 +1,6 @@
 package ch.adesso.partyservice.party.person.passenger.entity.event;
 
-import ch.adesso.partyservice.PartyEvent;
+import ch.adesso.partyservice.party.PartyEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

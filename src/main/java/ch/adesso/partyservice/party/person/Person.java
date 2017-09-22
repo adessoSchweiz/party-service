@@ -1,14 +1,14 @@
 package ch.adesso.partyservice.party.person;
 
 import ch.adesso.partyservice.CoreEvent;
-import ch.adesso.partyservice.Party;
-import ch.adesso.partyservice.PartyRole;
-import ch.adesso.partyservice.contact.entity.Contact;
-import ch.adesso.partyservice.contact.entity.event.ContactChangedEvent;
-import ch.adesso.partyservice.contact.entity.event.ContactCreatedEvent;
-import ch.adesso.partyservice.creditcard.entity.CreditCard;
-import ch.adesso.partyservice.creditcard.entity.event.CreditCardChangedEvent;
-import ch.adesso.partyservice.creditcard.entity.event.CreditCardCreatedEvent;
+import ch.adesso.partyservice.party.Party;
+import ch.adesso.partyservice.party.PartyRole;
+import ch.adesso.partyservice.party.person.contact.entity.Contact;
+import ch.adesso.partyservice.party.person.contact.entity.event.ContactChangedEvent;
+import ch.adesso.partyservice.party.person.contact.entity.event.ContactCreatedEvent;
+import ch.adesso.partyservice.party.person.passenger.entity.CreditCard;
+import ch.adesso.partyservice.party.person.passenger.entity.event.CreditCardChangedEvent;
+import ch.adesso.partyservice.party.person.passenger.entity.event.CreditCardCreatedEvent;
 import ch.adesso.partyservice.party.person.passenger.entity.Passenger;
 import ch.adesso.partyservice.party.person.passenger.entity.event.PassengerChangedEvent;
 import ch.adesso.partyservice.party.person.passenger.entity.event.PassengerCreatedEvent;
