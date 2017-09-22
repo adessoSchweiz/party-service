@@ -1,19 +1,14 @@
 package ch.adesso.partyservice.contact.entity;
 
-import ch.adesso.partyservice.contact.entity.event.Address;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Data
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(callSuper=true)
+@ToString(callSuper = true)
 public class ElectronicAddress extends Address {
 
-	private ElectronicAddressTypeEnum electronicType;
-	private String value;
+    private ElectronicAddressTypeEnum electronicType;
+    private String value;
 }
