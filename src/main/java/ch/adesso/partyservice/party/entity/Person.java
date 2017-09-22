@@ -20,12 +20,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-/**
- * 
- * AggregateRoot
- * 
- */
-// @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = Id.NAME)
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

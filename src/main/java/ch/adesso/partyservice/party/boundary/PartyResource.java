@@ -25,11 +25,10 @@ import ch.adesso.partyservice.party.controller.PassengerService;
 import ch.adesso.partyservice.party.entity.Credentials;
 import ch.adesso.partyservice.party.entity.Person;
 
-@Path("party")
+@Path("persons")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateless
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class PartyResource {
 
 	@Inject

@@ -13,6 +13,11 @@ parameters:
   displayName: Source URL
   required: true
   value: https://github.com/adessoSchweiz/party-service
+- name: PROJECT_NAME
+  description: The name of the project and the WAR file
+  displayName: Project Name
+  required: true
+  value: party-service
 - name: GIT_SOURCE_REF
   description: The source Ref for the application
   displayName: Source Ref
@@ -91,7 +96,7 @@ objects:
                   }
                   stage("Build WAR") {
                     sh "mvn clean package"
-                    sh "mv target/party-service.war target/ROOT.war"
+                    sh "mv target/${PROJECT_NAME}.war target/ROOT.war"
                     stash name:"war", includes:"target/ROOT.war"
                   }
                 }
@@ -185,26 +190,13 @@ objects:
             protocol: TCP
           resources: {}
           terminationMessagePath: /dev/termination-log
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 10
-            timeoutSeconds: 2
-            periodSeconds: 10
-            successThreshold: 1
-            failureThreshold: 3
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 30
-            timeoutSeconds: 2
-            periodSeconds: 10
-            successThreshold: 1
-            failureThreshold: 3
+          env:
+          - name: BOOTSTRAP_SERVERS
+            value: "kafka:9092"
+          - name: SCHEMA_REGISTRY_URL
+            value: "http://avro-schema-registry:8081"
+          - name: APPLICATION_SERVER
+            value: "localhost:8093"
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         securityContext: {}
