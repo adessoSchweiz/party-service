@@ -24,6 +24,9 @@ public class PersonServiceIT {
     @Rule
     public JAXRSClientProvider healthProvider = buildWithURI(BASE_PATH + "/health");
 
+    @Rule
+    public JAXRSClientProvider personProvider = buildWithURI(BASE_PATH + "/persons");
+
     private static final String FIRSTNAME = "robert";
     private static final String LASTNAME = "brem";
     private static final String BIRTHDAY = "12-12-2000";
@@ -37,7 +40,7 @@ public class PersonServiceIT {
                 .add(Person.JSON_KEYS.BIRTHDAY, BIRTHDAY)
                 .build();
 
-        Response postResponse = this.healthProvider
+        Response postResponse = this.personProvider
                 .target()
                 .request()
                 .post(Entity.json(personToCreate));
@@ -56,7 +59,6 @@ public class PersonServiceIT {
                 .queryParam("personId", ID)
                 .request(MediaType.APPLICATION_JSON)
                 .get(JsonObject.class);
-        System.out.println("person = " + person);
         assertThat(person.getString(Person.JSON_KEYS.FIRSTNAME), is(FIRSTNAME));
         assertThat(person.getString(Person.JSON_KEYS.LASTNAME), is(LASTNAME));
         assertThat(person.getString(Person.JSON_KEYS.BIRTHDAY), is(BIRTHDAY));

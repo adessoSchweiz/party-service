@@ -10,6 +10,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.concurrent.ExecutorService;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -29,7 +30,10 @@ public class PersonsResource {
 
     @POST
     public void createPerson(JsonObject person, @Suspended final AsyncResponse asyncResponse) {
-        supplyAsync(() -> personService.createPerson(new Person(person)), personPool)
+        supplyAsync(() -> Response
+                .status(Response.Status.CREATED)
+                .entity(personService.createPerson(new Person(person)))
+                .build(), personPool)
                 .thenApply(asyncResponse::resume);
     }
 
