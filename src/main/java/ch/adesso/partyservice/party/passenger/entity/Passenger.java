@@ -96,6 +96,7 @@ public class Passenger extends AggregateRoot {
     }
 
     public void applyEvent(PassengerCreatedEvent event) {
+        System.out.println("event = " + event);
         setId(event.getAggregateId());
         setVersion(event.getSequence());
     }

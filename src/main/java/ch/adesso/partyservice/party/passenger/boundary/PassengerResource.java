@@ -29,10 +29,11 @@ public class PassengerResource {
     private PassengerService passengerService;
 
     @POST
-    public void createPerson(JsonObject person, @Suspended final AsyncResponse asyncResponse) {
+    public void createPassenger(JsonObject passenger, @Suspended final AsyncResponse asyncResponse) {
+        System.out.println("PassengerResource.createPerson");
         supplyAsync(() -> Response
                 .status(Response.Status.CREATED)
-                .entity(passengerService.createPassenger(new Passenger(person)))
+                .entity(passengerService.createPassenger(new Passenger(passenger)))
                 .build(), personPool)
                 .thenApply(asyncResponse::resume);
     }
