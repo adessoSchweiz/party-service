@@ -3,7 +3,6 @@ package ch.adesso.partyservice.party.passenger.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import org.apache.avro.reflect.Nullable;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -11,15 +10,10 @@ import javax.json.JsonObject;
 @AllArgsConstructor
 @Data
 public class Address {
-    @Nullable
     private String street;
-    @Nullable
     private String houseNumber;
-    @Nullable
     private String zip;
-    @Nullable
     private String city;
-    @Nullable
     private String country;
 
     public enum JSON_KEYS {

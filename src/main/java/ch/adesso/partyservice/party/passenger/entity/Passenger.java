@@ -3,7 +3,6 @@ package ch.adesso.partyservice.party.passenger.entity;
 import ch.adesso.partyservice.AggregateRoot;
 import ch.adesso.partyservice.party.passenger.entity.event.*;
 import lombok.*;
-import org.apache.avro.reflect.Nullable;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -16,21 +15,13 @@ import java.util.logging.Logger;
 public class Passenger extends AggregateRoot {
     private static final Logger LOG = Logger.getLogger(Passenger.class.getName());
 
-    @Nullable
     private String firstname;
-    @Nullable
     private String lastname;
-    @Nullable
     private String birthday;
-    @Nullable
     private PartyStatus status;
-    @Nullable
     private String mobil;
-    @Nullable
     private String email;
-    @Nullable
     private Address address;
-    @Nullable
     private CreditCard creditCard;
 
     public enum JSON_KEYS {

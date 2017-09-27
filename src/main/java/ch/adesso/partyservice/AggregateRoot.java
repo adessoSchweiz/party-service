@@ -1,11 +1,7 @@
 package ch.adesso.partyservice;
 
 import avro.shaded.com.google.common.collect.Lists;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.apache.avro.reflect.AvroDefault;
-import org.apache.avro.reflect.AvroIgnore;
-import org.apache.avro.reflect.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,12 +13,8 @@ import java.util.logging.Logger;
 public abstract class AggregateRoot {
     private static final Logger LOG = Logger.getLogger(AggregateRoot.class.getName());
 
-    @Nullable
     private String id;
-    @AvroDefault("0")
     private long version = 0;
-    @JsonIgnore
-    @AvroIgnore
     private Collection<CoreEvent> uncommitedEvents = Lists.newArrayList();
 
     public void applyEvent(final CoreEvent event) {

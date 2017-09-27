@@ -21,7 +21,7 @@ public class PassengerChangedEvent extends PartyEvent {
     @Nullable
     private String birthday;
     @Nullable
-    private PartyStatus status;
+    private String status;
     @Nullable
     private String mobil;
     @Nullable
@@ -32,7 +32,7 @@ public class PassengerChangedEvent extends PartyEvent {
         this.firstname = firstname;
         this.lastname = lastname;
         this.birthday = birthday;
-        this.status = status;
+        this.status = status.name();
         this.mobil = mobile;
         this.email = email;
     }
