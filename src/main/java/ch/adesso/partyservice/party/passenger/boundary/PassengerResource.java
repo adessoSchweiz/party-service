@@ -29,12 +29,19 @@ public class PassengerResource {
     private PassengerService passengerService;
 
     @POST
-    public void createPassenger(JsonObject passenger, @Suspended final AsyncResponse asyncResponse) {
-        supplyAsync(() -> Response
+    public Response createPassenger(JsonObject passenger/*, @Suspended final AsyncResponse asyncResponse*/) {
+
+        return Response
+                .status(Response.Status.CREATED)
+                .entity(passengerService.createPassenger(new Passenger(passenger)))
+                .build();
+
+       /* supplyAsync(() -> Response
                 .status(Response.Status.CREATED)
                 .entity(passengerService.createPassenger(new Passenger(passenger)))
                 .build(), personPool)
                 .thenApply(asyncResponse::resume);
+    */
     }
 
     @PUT
