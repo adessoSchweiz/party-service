@@ -14,7 +14,6 @@ public class PassengerService {
     private KafkaStore kafkaStore;
 
     public Passenger createPassenger(Passenger passenger) {
-        System.out.println("PassengerService.createPassenger");
         String passengerId = UUID.randomUUID().toString();
         Passenger newPerson = new Passenger(passengerId);
         updatePassenger(passenger, newPerson);

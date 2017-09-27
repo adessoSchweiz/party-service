@@ -30,7 +30,6 @@ public class PassengerResource {
 
     @POST
     public void createPassenger(JsonObject passenger, @Suspended final AsyncResponse asyncResponse) {
-        System.out.println("PassengerResource.createPerson");
         supplyAsync(() -> Response
                 .status(Response.Status.CREATED)
                 .entity(passengerService.createPassenger(new Passenger(passenger)))

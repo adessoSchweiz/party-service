@@ -13,11 +13,15 @@ import org.apache.avro.reflect.Nullable;
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 @Data
 @EqualsAndHashCode
 @ToString
 public class Passenger extends AggregateRoot {
+
+    private static final Logger LOG = Logger.getLogger(Passenger.class.getName());
+
     @Nullable
     private String firstname;
     @Nullable
@@ -96,7 +100,7 @@ public class Passenger extends AggregateRoot {
     }
 
     public void applyEvent(PassengerCreatedEvent event) {
-        System.out.println("event = " + event);
+        LOG.info("event = " + event);
         setId(event.getAggregateId());
         setVersion(event.getSequence());
     }
