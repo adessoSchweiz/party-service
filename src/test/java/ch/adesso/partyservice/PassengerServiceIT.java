@@ -37,7 +37,7 @@ public class PassengerServiceIT {
 
     public static final class ADDRESS {
         private static final String STREET = "Bahnhaldenstrasse";
-        private static final String HOUSE_NO = "2";
+        private static final String HOUSE_NO = "42";
         private static final String CITY = "Zürich";
         private static final String COUNTRY = "Switzerland";
         private static final String ZIP = "8000";
@@ -90,6 +90,7 @@ public class PassengerServiceIT {
         assertThat(person.getString(Passenger.JSON_KEYS.EMAIL.getName()), is(EMAIL));
 
         JsonObject address = person.getJsonObject(Passenger.JSON_KEYS.ADDRESS.getName());
+        System.out.println("address = " + address);
         assertThat(address.getString(Address.JSON_KEYS.STREET.getName()), is(ADDRESS.STREET));
         assertThat(address.getString(Address.JSON_KEYS.HOUSE_NO.getName()), is(ADDRESS.HOUSE_NO));
         assertThat(address.getString(Address.JSON_KEYS.CITY.getName()), is(ADDRESS.CITY));

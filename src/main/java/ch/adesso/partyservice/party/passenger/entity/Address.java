@@ -23,7 +23,7 @@ public class Address {
     private String country;
 
     public enum JSON_KEYS {
-        STREET("street"), HOUSE_NO("house_no"), CITY("city"), COUNTRY("country"), ZIP("zip");
+        STREET("street"), HOUSE_NO("house_number"), CITY("city"), COUNTRY("country"), ZIP("zip");
 
         @Getter
         private String name;
