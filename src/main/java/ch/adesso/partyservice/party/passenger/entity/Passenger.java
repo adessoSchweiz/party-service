@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 @EqualsAndHashCode
 @ToString
 public class Passenger extends AggregateRoot {
-
     private static final Logger LOG = Logger.getLogger(Passenger.class.getName());
 
     @Nullable

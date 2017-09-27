@@ -10,21 +10,22 @@ import org.apache.avro.reflect.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Logger;
 
 @Data
 public abstract class AggregateRoot {
+    private static final Logger LOG = Logger.getLogger(AggregateRoot.class.getName());
 
     @Nullable
     private String id;
-
     @AvroDefault("0")
     private long version = 0;
-
     @JsonIgnore
     @AvroIgnore
     private Collection<CoreEvent> uncommitedEvents = Lists.newArrayList();
 
     public void applyEvent(final CoreEvent event) {
+        LOG.info("event: " + event);
         try {
             getClass().getDeclaredMethod("applyEvent", event.getClass()).invoke(this, event);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

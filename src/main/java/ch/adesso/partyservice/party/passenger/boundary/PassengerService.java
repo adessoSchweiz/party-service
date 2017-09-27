@@ -6,14 +6,17 @@ import ch.adesso.partyservice.party.passenger.entity.Passenger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 @Stateless
 public class PassengerService {
+    private static final Logger LOG = Logger.getLogger(PassengerService.class.getName());
 
     @Inject
     private KafkaStore kafkaStore;
 
     public Passenger createPassenger(Passenger passenger) {
+        LOG.info("create Passenger Service");
         String passengerId = UUID.randomUUID().toString();
         Passenger newPerson = new Passenger(passengerId);
         updatePassenger(passenger, newPerson);
