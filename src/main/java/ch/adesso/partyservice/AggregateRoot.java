@@ -8,6 +8,7 @@ import org.apache.avro.reflect.AvroIgnore;
 import org.apache.avro.reflect.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Logger;
@@ -27,7 +28,10 @@ public abstract class AggregateRoot {
     public void applyEvent(final CoreEvent event) {
         LOG.info("event: " + event);
         try {
-            getClass().getDeclaredMethod("applyEvent", event.getClass()).invoke(this, event);
+            Method applyEvent = getClass()
+                    .getDeclaredMethod("applyEvent", event.getClass());
+            applyEvent.setAccessible(true);
+            applyEvent.invoke(this, event);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
