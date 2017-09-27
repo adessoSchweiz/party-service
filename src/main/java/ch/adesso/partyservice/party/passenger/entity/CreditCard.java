@@ -1,4 +1,4 @@
-package ch.adesso.partyservice.party.person.passenger.entity;
+package ch.adesso.partyservice.party.passenger.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

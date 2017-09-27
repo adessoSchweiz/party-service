@@ -1,7 +1,7 @@
 package ch.adesso.partyservice.health.boundary;
 
 import ch.adesso.partyservice.eventstore.boundary.KafkaStore;
-import ch.adesso.partyservice.party.person.Person;
+import ch.adesso.partyservice.party.passenger.entity.Passenger;
 import com.airhacks.porcupine.execution.boundary.Dedicated;
 
 import javax.ejb.Stateless;
@@ -32,7 +32,7 @@ public class HealthResource {
             @QueryParam("personId") String personId,
             @Suspended final AsyncResponse asyncResponse) {
         supplyAsync(() -> kafkaStore
-                .findById(personId, Person.class), healthPool)
+                .findById(personId, Passenger.class), healthPool)
                 .thenApply(asyncResponse::resume);
     }
 }

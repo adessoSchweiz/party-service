@@ -1,4 +1,4 @@
-package ch.adesso.partyservice.party.person;
+package ch.adesso.partyservice.party.passenger;
 
 import ch.adesso.partyservice.party.PartyEvent;
 import org.apache.avro.reflect.Nullable;

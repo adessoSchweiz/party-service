@@ -1,4 +1,4 @@
-package ch.adesso.partyservice.party.person;
+package ch.adesso.partyservice.party.passenger.entity.event;
 
 import ch.adesso.partyservice.party.PartyEvent;
 import lombok.Data;
@@ -10,9 +10,9 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @NoArgsConstructor
-public class PersonCreatedEvent extends PartyEvent {
+public class PassengerCreatedEvent extends PartyEvent {
 
-	public PersonCreatedEvent(String aggregateId, long sequence) {
-		super(PersonCreatedEvent.class, aggregateId, sequence);
-	}
+    public PassengerCreatedEvent(String aggregateId) {
+        super(PassengerCreatedEvent.class, aggregateId, 0);
+    }
 }

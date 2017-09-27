@@ -1,7 +1,7 @@
-package ch.adesso.partyservice.party.person.passenger.entity.event;
+package ch.adesso.partyservice.party.passenger.entity.event;
 
 import ch.adesso.partyservice.party.PartyEvent;
-import ch.adesso.partyservice.party.person.passenger.entity.CreditCardTypeEnum;
+import ch.adesso.partyservice.party.passenger.entity.CreditCardTypeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

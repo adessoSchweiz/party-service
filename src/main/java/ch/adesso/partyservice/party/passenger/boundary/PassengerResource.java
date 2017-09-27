@@ -1,6 +1,6 @@
-package ch.adesso.partyservice.party.person.passenger.boundary;
+package ch.adesso.partyservice.party.passenger.boundary;
 
-import ch.adesso.partyservice.party.person.Person;
+import ch.adesso.partyservice.party.passenger.entity.Passenger;
 import com.airhacks.porcupine.execution.boundary.Dedicated;
 
 import javax.ejb.Stateless;
@@ -32,7 +32,7 @@ public class PassengerResource {
     public void createPerson(JsonObject person, @Suspended final AsyncResponse asyncResponse) {
         supplyAsync(() -> Response
                 .status(Response.Status.CREATED)
-                .entity(passengerService.createPerson(new Person(person)))
+                .entity(passengerService.createPassenger(new Passenger(person)))
                 .build(), personPool)
                 .thenApply(asyncResponse::resume);
     }
@@ -40,7 +40,7 @@ public class PassengerResource {
     @PUT
     public void updatePerson(JsonObject person,
                              @Suspended final AsyncResponse asyncResponse) {
-        supplyAsync(() -> passengerService.updatePerson(new Person(person)), personPool)
+        supplyAsync(() -> passengerService.updatePassenger(new Passenger(person)), personPool)
                 .thenApply(asyncResponse::resume);
     }
 }

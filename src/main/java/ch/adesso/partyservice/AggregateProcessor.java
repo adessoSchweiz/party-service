@@ -6,7 +6,7 @@ import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueStore;
 
-import ch.adesso.partyservice.party.person.CredentialsChangedEvent;
+import ch.adesso.partyservice.party.passenger.CredentialsChangedEvent;
 
 public class AggregateProcessor implements Processor<String, EventEnvelope> {
 
