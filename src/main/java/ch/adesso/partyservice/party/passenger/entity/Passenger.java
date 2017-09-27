@@ -1,14 +1,12 @@
 package ch.adesso.partyservice.party.passenger.entity;
 
 import ch.adesso.partyservice.AggregateRoot;
-import ch.adesso.partyservice.CoreEvent;
 import ch.adesso.partyservice.party.passenger.entity.event.*;
 import lombok.*;
 import org.apache.avro.reflect.Nullable;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import java.util.Collection;
 import java.util.logging.Logger;
 
 @NoArgsConstructor
@@ -81,21 +79,16 @@ public class Passenger extends AggregateRoot {
         setCreditCard(new CreditCard(passenger.getJsonObject(JSON_KEYS.CREDIT_CARD.getKeyName())));
     }
 
-    public Passenger(Collection<CoreEvent> events) {
-        events.stream().forEach(this::applyEvent);
-    }
-
     public Passenger(String id) {
         applyChange(new PassengerCreatedEvent(id));
     }
 
-    public void applyEvent(PassengerCreatedEvent event) {
-        LOG.info("event = " + event);
+    private void applyEvent(PassengerCreatedEvent event) {
         setId(event.getAggregateId());
         setVersion(event.getSequence());
     }
 
-    public void applyEvent(PassengerChangedEvent event) {
+    private void applyEvent(PassengerChangedEvent event) {
         setVersion(event.getSequence());
         setFirstname(event.getFirstname());
         setLastname(event.getLastname());
@@ -105,7 +98,7 @@ public class Passenger extends AggregateRoot {
         setEmail(event.getEmail());
     }
 
-    public void applyEvent(CreditCardCreatedEvent event) {
+    private void applyEvent(CreditCardCreatedEvent event) {
         setVersion(event.getSequence());
         CreditCard creditCard = new CreditCard(event.getCardNumber(), event.getCardType(), event.getNameOnCard(),
                 event.getValidToMonth(), event.getValidToYear(), event.getSecretNumber());
@@ -114,7 +107,7 @@ public class Passenger extends AggregateRoot {
     }
 
 
-    public void applyEvent(CreditCardChangedEvent event) {
+    private void applyEvent(CreditCardChangedEvent event) {
         setVersion(event.getSequence());
         CreditCard creditCard = new CreditCard(event.getCardNumber(), event.getCardType(), event.getNameOnCard(),
                 event.getValidToMonth(), event.getValidToYear(), event.getSecretNumber());
@@ -122,7 +115,7 @@ public class Passenger extends AggregateRoot {
         setCreditCard(creditCard);
     }
 
-    public void applyEvent(AddressCreatedEvent event) {
+    private void applyEvent(AddressCreatedEvent event) {
         setVersion(event.getSequence());
         Address address = new Address(event.getStreet(), event.getHouseNumber(), event.getZip(), event.getCity(), event.getCountry());
         setAddress(address);

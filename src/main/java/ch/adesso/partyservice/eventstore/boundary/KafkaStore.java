@@ -1,12 +1,8 @@
 package ch.adesso.partyservice.eventstore.boundary;
 
-import ch.adesso.partyservice.AggregateRoot;
-import ch.adesso.partyservice.party.PartyEventStream;
-import ch.adesso.partyservice.CoreEvent;
-import ch.adesso.partyservice.EventEnvelope;
+import ch.adesso.partyservice.*;
 import ch.adesso.partyservice.party.PartyEvent;
-import ch.adesso.partyservice.Topics;
-import ch.adesso.partyservice.QueryableStoreUtils;
+import ch.adesso.partyservice.party.passenger.entity.Passenger;
 import kafka.common.KafkaException;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -20,10 +16,13 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.persistence.EntityNotFoundException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -70,8 +69,8 @@ public class KafkaStore {
         return f;
     }
 
-    public PartyEventStream loadLastEvents(String aggregateId, String storeName) {
-        ReadOnlyKeyValueStore<String, PartyEventStream> store = null;
+    public AggregateRoot getAggregateRoot(String aggregateId, String storeName) {
+        ReadOnlyKeyValueStore<String, String> store = null;
         try {
             store = QueryableStoreUtils.waitUntilStoreIsQueryable(
                     storeName, keyValueStore(), kafkaStreams);
@@ -79,32 +78,32 @@ public class KafkaStore {
         } catch (InterruptedException e) {
             throw new KafkaException("KeyValueStore can not read current data.", e);
         }
-        return store.get(aggregateId);
+
+        String jsonString = store.get(aggregateId);
+        if (jsonString != null) {
+            JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
+            JsonObject jsonObject = jsonReader.readObject();
+            jsonReader.close();
+            return new Passenger(jsonObject);
+        }
+
+        return null;
     }
 
     public <T extends AggregateRoot> T findById(String id, Class<T> partyClass) {
-        PartyEventStream stream = loadLastEvents(id, Topics.PARTY_STORE.getTopic());
-        if (stream == null) {
+        AggregateRoot root = getAggregateRoot(id, Topics.PARTY_STORE.getTopic());
+        if (root == null) {
             throw new EntityNotFoundException("Could not find Entity for ID: " + id);
         }
 
-        T party = null;
-        try {
-            party = partyClass.newInstance();
-            stream.getLastEvents().values().stream()
-                    .sorted(Comparator.comparingLong(CoreEvent::getSequence)).forEach(party::applyEvent);
-
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        return party;
+        return (T) root;
     }
 
     public <T extends AggregateRoot> T findByIdAndVersionWaitForResult(String id, long version, Class<T> partyClass) {
         int loop = 0;
         while (true) {
-            PartyEventStream stream = loadLastEvents(id, Topics.PARTY_STORE.getTopic());
-            if (stream == null || (stream.getAggregateVersion() != version)) {
+            AggregateRoot root = getAggregateRoot(id, Topics.PARTY_STORE.getTopic());
+            if (root == null || (root.getVersion() != version)) {
                 loop++;
                 if (loop > 20) {
                     break;
@@ -118,19 +117,9 @@ public class KafkaStore {
                     break;
                 }
 
-            } else {
-
-                try {
-                    T party = partyClass.newInstance();
-                    stream.getLastEvents().values().stream()
-                            .sorted(Comparator.comparingLong(CoreEvent::getSequence))
-                            .forEach(party::applyEvent);
-
-                    return party;
-                } catch (InstantiationException | IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
             }
+
+            return (T) root;
         }
 
         throw new EntityNotFoundException("Could not find Entity for ID: " + id);

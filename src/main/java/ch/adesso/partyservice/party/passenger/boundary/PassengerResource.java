@@ -23,31 +23,24 @@ public class PassengerResource {
 
     @Inject
     @Dedicated
-    private ExecutorService personPool;
+    private ExecutorService passengerPool;
 
     @Inject
     private PassengerService passengerService;
 
     @POST
-    public Response createPassenger(JsonObject passenger/*, @Suspended final AsyncResponse asyncResponse*/) {
-
-        return Response
+    public void createPassenger(JsonObject passenger, @Suspended final AsyncResponse asyncResponse) {
+        supplyAsync(() -> Response
                 .status(Response.Status.CREATED)
                 .entity(passengerService.createPassenger(new Passenger(passenger)))
-                .build();
-
-       /* supplyAsync(() -> Response
-                .status(Response.PartyStatus.CREATED)
-                .entity(passengerService.createPassenger(new Passenger(passenger)))
-                .build(), personPool)
+                .build(), passengerPool)
                 .thenApply(asyncResponse::resume);
-    */
     }
 
     @PUT
-    public void updatePerson(JsonObject person,
-                             @Suspended final AsyncResponse asyncResponse) {
-        supplyAsync(() -> passengerService.updatePassenger(new Passenger(person)), personPool)
+    public void updatePassenger(JsonObject passenger,
+                                @Suspended final AsyncResponse asyncResponse) {
+        supplyAsync(() -> passengerService.updatePassenger(new Passenger(passenger)), passengerPool)
                 .thenApply(asyncResponse::resume);
     }
 }

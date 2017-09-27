@@ -3,7 +3,6 @@ package ch.adesso.partyservice.configuration.boundary;
 import ch.adesso.partyservice.AggregateProcessor;
 import ch.adesso.partyservice.EventEnvelope;
 import ch.adesso.partyservice.Topics;
-import ch.adesso.partyservice.party.PartyEventStream;
 import ch.adesso.partyservice.serializer.boundary.KafkaAvroReflectDeserializer;
 import ch.adesso.partyservice.serializer.boundary.KafkaAvroReflectSerializer;
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
@@ -87,10 +86,9 @@ public class KafkaStreamProvider {
 
     public TopologyBuilder createStreamBuilder() {
         final Serde<EventEnvelope> eventSerde = createEventSerde();
-        final Serde<PartyEventStream> eventStreamSerde = createStreamSerde();
         String sourceName = "party-events-source";
         String processorName = "party-processor";
-        StateStoreSupplier<?> stateStore = createStateStore(eventStreamSerde);
+        StateStoreSupplier<?> stateStore = createStateStore();
 
         return new KStreamBuilder()
                 .addStateStore(stateStore)
@@ -100,22 +98,13 @@ public class KafkaStreamProvider {
                 .connectProcessorAndStateStores(processorName, stateStore.name());
     }
 
-    public StateStoreSupplier<?> createStateStore(Serde<PartyEventStream> eventStreamSerde) {
+    public StateStoreSupplier<?> createStateStore() {
         return create(Topics.PARTY_STORE.getTopic())
                 .withKeys(Serdes.String())
-                .withValues(eventStreamSerde)
+                .withValues(Serdes.String())
                 .persistent()
                 .enableCaching()
                 .build();
-    }
-
-    public Serde<PartyEventStream> createStreamSerde() {
-        final Serde<PartyEventStream> eventStreamSerde = serdeFrom(new KafkaAvroReflectSerializer<>(),
-                new KafkaAvroReflectDeserializer<>(PartyEventStream.class));
-        eventStreamSerde.configure(
-                Collections.singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, SCHEMA_REGISTRY_URL),
-                false);
-        return eventStreamSerde;
     }
 
     public Serde<EventEnvelope> createEventSerde() {

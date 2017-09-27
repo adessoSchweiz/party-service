@@ -6,6 +6,7 @@ import org.apache.avro.reflect.Nullable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.avro.reflect.Union;
 
 @NoArgsConstructor
 @ToString
@@ -19,5 +20,10 @@ public class EventEnvelope {
 
     public EventEnvelope(PartyEvent event) {
         this.event = event;
+    }
+
+    @Union(Void.class)
+    public PartyEvent getEvent() {
+        return event;
     }
 }

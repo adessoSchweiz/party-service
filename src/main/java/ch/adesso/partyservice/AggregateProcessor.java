@@ -1,16 +1,20 @@
 package ch.adesso.partyservice;
 
-import ch.adesso.partyservice.party.PartyEvent;
-import ch.adesso.partyservice.party.PartyEventStream;
+import ch.adesso.partyservice.party.passenger.entity.Passenger;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueStore;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import java.io.StringReader;
 
 public class AggregateProcessor implements Processor<String, EventEnvelope> {
 
     private String partyStoreName;
     private ProcessorContext context;
-    private KeyValueStore<String, PartyEventStream> kvPartyStore;
+    private KeyValueStore<String, String> kvPartyStore;
 
     public AggregateProcessor(String partyStoreName) {
         this.partyStoreName = partyStoreName;
@@ -20,21 +24,26 @@ public class AggregateProcessor implements Processor<String, EventEnvelope> {
     @Override
     public void init(ProcessorContext context) {
         this.context = context;
-        kvPartyStore = (KeyValueStore<String, PartyEventStream>) context.getStateStore(partyStoreName);
+        kvPartyStore = (KeyValueStore<String, String>) context.getStateStore(partyStoreName);
     }
 
     @Override
     public void process(String key, EventEnvelope value) {
-        PartyEvent event = value.getEvent();
-        PartyEventStream stream = kvPartyStore.get(key);
-        if (stream == null) {
-            stream = new PartyEventStream(event.getAggregateId());
+        CoreEvent event = value.getEvent();
+        AggregateRoot root = null;
+        String aggregateAsString = kvPartyStore.get(key);
+        if (aggregateAsString == null) {
+            root = new Passenger(event.getAggregateId());
+        } else {
+            JsonReader jsonReader = Json.createReader(new StringReader(aggregateAsString));
+            JsonObject jsonObject = jsonReader.readObject();
+            jsonReader.close();
+            root = new Passenger(jsonObject);
         }
 
-        stream.setAggregateVersion(event.getSequence());
-        stream.getLastEvents().put(event.getEventType(), event);
+        root.applyEvent(event);
 
-        kvPartyStore.put(key, stream);
+        kvPartyStore.put(key, ((Passenger) root).toJson().toString());
 
         context.commit();
     }
