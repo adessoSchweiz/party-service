@@ -38,7 +38,7 @@ public class PassengerServiceIT {
     public static final class ADDRESS {
         private static final String STREET = "Bahnhaldenstrasse";
         private static final String HOUSE_NUMBER = "42a";
-        private static final String CITY = "Zürich";
+        private static final String CITY = "Zuerich";
         private static final String COUNTRY = "Switzerland";
         private static final String ZIP = "8000";
     }
