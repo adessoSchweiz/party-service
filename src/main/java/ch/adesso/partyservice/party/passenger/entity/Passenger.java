@@ -36,7 +36,15 @@ public class Passenger extends AggregateRoot {
     private CreditCard creditCard;
 
     public enum JSON_KEYS {
-        ID("id"), FIRSTNAME("firstname"), LASTNAME("lastname"), BIRTHDAY("birthday"), STATUS("status"), MOBIL("mobil"), EMAIL("email"), ADDRESS("address");
+        ID("id"),
+        FIRSTNAME("firstname"),
+        LASTNAME("lastname"),
+        BIRTHDAY("birthday"),
+        STATUS("status"),
+        MOBIL("mobil"),
+        EMAIL("email"),
+        ADDRESS("address"),
+        CREDIT_CARD("credit_card");
 
         @Getter
         private String keyName;
@@ -57,18 +65,8 @@ public class Passenger extends AggregateRoot {
                 .add(JSON_KEYS.MOBIL.getKeyName(), getMobil())
                 .add(JSON_KEYS.EMAIL.getKeyName(), getEmail())
                 .add(JSON_KEYS.ADDRESS.getKeyName(), getAddress().toJson())
+                .add(JSON_KEYS.CREDIT_CARD.getKeyName(), getCreditCard().toJson())
                 .build();
-    }
-
-    public Passenger(Passenger person) {
-        setId(person.getId());
-        setFirstname(person.getFirstname());
-        setLastname(person.getLastname());
-        setBirthday(person.getBirthday());
-        setStatus(person.getStatus());
-        setMobil(person.getMobil());
-        setEmail(person.getEmail());
-        setAddress(new Address(person.getAddress()));
     }
 
     public Passenger(JsonObject passenger) {
@@ -80,6 +78,7 @@ public class Passenger extends AggregateRoot {
         setMobil(passenger.getString(JSON_KEYS.MOBIL.getKeyName(), null));
         setEmail(passenger.getString(JSON_KEYS.EMAIL.getKeyName(), null));
         setAddress(new Address(passenger.getJsonObject(JSON_KEYS.ADDRESS.getKeyName())));
+        setCreditCard(new CreditCard(passenger.getJsonObject(JSON_KEYS.CREDIT_CARD.getKeyName())));
     }
 
     public Passenger(Collection<CoreEvent> events) {

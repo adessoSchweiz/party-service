@@ -42,14 +42,6 @@ public class Address {
         setZip(address.getString(JSON_KEYS.ZIP.getKeyName(), null));
     }
 
-    public Address(Address address) {
-        setStreet(address.getStreet());
-        setHouseNumber(this.getHouseNumber());
-        setCity(address.getCity());
-        setCountry(address.getCountry());
-        setZip(address.getZip());
-    }
-
     public JsonObject toJson() {
         return Json.createObjectBuilder()
                 .add(JSON_KEYS.STREET.getKeyName(), getStreet())
