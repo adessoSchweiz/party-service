@@ -100,7 +100,7 @@ public class KafkaStore {
         return party;
     }
 
-    public <T extends AggregateRoot> T findByIdAndVersionWaitForResul(String id, long version, Class<T> partyClass) {
+    public <T extends AggregateRoot> T findByIdAndVersionWaitForResult(String id, long version, Class<T> partyClass) {
         int loop = 0;
         while (true) {
             PartyEventStream stream = loadLastEvents(id, Topics.PARTY_STORE.getTopic());

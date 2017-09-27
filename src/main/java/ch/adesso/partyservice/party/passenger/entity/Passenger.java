@@ -3,10 +3,7 @@ package ch.adesso.partyservice.party.passenger.entity;
 import ch.adesso.partyservice.AggregateRoot;
 import ch.adesso.partyservice.CoreEvent;
 import ch.adesso.partyservice.party.passenger.entity.event.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import org.apache.avro.reflect.Nullable;
 
 import javax.json.Json;
@@ -14,9 +11,10 @@ import javax.json.JsonObject;
 import java.util.Collection;
 import java.util.logging.Logger;
 
+@NoArgsConstructor
 @Data
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class Passenger extends AggregateRoot {
     private static final Logger LOG = Logger.getLogger(Passenger.class.getName());
 

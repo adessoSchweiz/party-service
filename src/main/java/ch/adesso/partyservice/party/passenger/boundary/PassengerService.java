@@ -20,11 +20,11 @@ public class PassengerService {
         String passengerId = UUID.randomUUID().toString();
         Passenger newPerson = new Passenger(passengerId);
         updatePassenger(passenger, newPerson);
-        return kafkaStore.findByIdAndVersionWaitForResul(newPerson.getId(), newPerson.getVersion(), Passenger.class);
+        return kafkaStore.findByIdAndVersionWaitForResult(newPerson.getId(), newPerson.getVersion(), Passenger.class);
     }
 
     public Passenger updatePassenger(Passenger passenger) {
-        Passenger storedPassenger = kafkaStore.findByIdAndVersionWaitForResul(passenger.getId(), passenger.getVersion(),
+        Passenger storedPassenger = kafkaStore.findByIdAndVersionWaitForResult(passenger.getId(), passenger.getVersion(),
                 Passenger.class);
         updatePassenger(passenger, storedPassenger);
         return storedPassenger;
