@@ -139,7 +139,7 @@ public class Passenger extends AggregateRoot {
                 getId(),
                 getNextVersion(),
                 address.getStreet(),
-                address.getHouseNo(),
+                address.getHouseNumber(),
                 address.getZip(),
                 address.getCity(),
                 address.getCountry()));

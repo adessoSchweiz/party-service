@@ -14,7 +14,7 @@ public class Address {
     @Nullable
     private String street;
     @Nullable
-    private String houseNo;
+    private String houseNumber;
     @Nullable
     private String zip;
     @Nullable
@@ -36,7 +36,7 @@ public class Address {
 
     public Address(JsonObject address) {
         setStreet(address.getString(JSON_KEYS.STREET.getKeyName(), null));
-        setHouseNo(address.getString(JSON_KEYS.HOUSE_NUMBER.getKeyName(), null));
+        setHouseNumber(address.getString(JSON_KEYS.HOUSE_NUMBER.getKeyName(), null));
         setCity(address.getString(JSON_KEYS.CITY.getKeyName(), null));
         setCountry(address.getString(JSON_KEYS.COUNTRY.getKeyName(), null));
         setZip(address.getString(JSON_KEYS.ZIP.getKeyName(), null));
@@ -44,7 +44,7 @@ public class Address {
 
     public Address(Address address) {
         setStreet(address.getStreet());
-        setHouseNo(address.getHouseNo());
+        setHouseNumber(this.getHouseNumber());
         setCity(address.getCity());
         setCountry(address.getCountry());
         setZip(address.getZip());
@@ -53,7 +53,7 @@ public class Address {
     public JsonObject toJson() {
         return Json.createObjectBuilder()
                 .add(JSON_KEYS.STREET.getKeyName(), getStreet())
-                .add(JSON_KEYS.HOUSE_NUMBER.getKeyName(), getHouseNo())
+                .add(JSON_KEYS.HOUSE_NUMBER.getKeyName(), this.getHouseNumber())
                 .add(JSON_KEYS.CITY.getKeyName(), getCity())
                 .add(JSON_KEYS.COUNTRY.getKeyName(), getCountry())
                 .add(JSON_KEYS.ZIP.getKeyName(), getZip())
