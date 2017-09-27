@@ -118,9 +118,9 @@ public class PassengerServiceIT {
         assertThat(creditCard.getString(CreditCard.JSON_KEYS.CARD_NUMBER.getKeyName()), is(CREDIT_CARD.CARD_NUMBER));
         assertThat(creditCard.getString(CreditCard.JSON_KEYS.CARD_TYPE.getKeyName()), is(CREDIT_CARD.CARD_TYPE));
         assertThat(creditCard.getString(CreditCard.JSON_KEYS.NAME_ON_CARD.getKeyName()), is(CREDIT_CARD.NAME_ON_CARD));
-        assertThat(creditCard.getString(CreditCard.JSON_KEYS.VALID_TO_MONTH.getKeyName()), is(CREDIT_CARD.VALID_TO_MONTH));
-        assertThat(creditCard.getString(CreditCard.JSON_KEYS.VALID_TO_YEAR.getKeyName()), is(CREDIT_CARD.VALID_TO_YEAR));
-        assertThat(creditCard.getString(CreditCard.JSON_KEYS.SECRET_NUMBER.getKeyName()), is(CREDIT_CARD.SECRET_NUMBER));
+        assertThat(creditCard.getInt(CreditCard.JSON_KEYS.VALID_TO_MONTH.getKeyName()), is(CREDIT_CARD.VALID_TO_MONTH));
+        assertThat(creditCard.getInt(CreditCard.JSON_KEYS.VALID_TO_YEAR.getKeyName()), is(CREDIT_CARD.VALID_TO_YEAR));
+        assertThat(creditCard.getInt(CreditCard.JSON_KEYS.SECRET_NUMBER.getKeyName()), is(CREDIT_CARD.SECRET_NUMBER));
     }
 
 }
