@@ -134,6 +134,16 @@ public class Passenger extends AggregateRoot {
         applyChange(new PassengerChangedEvent(getId(), getNextVersion(), person.getFirstname(), person.getLastname(), person.getBirthday(), person.getStatus(), person.getMobil(), person.getEmail()));
     }
 
+    public void updateAddress(Address address) {
+        applyChange(new AddressCreatedEvent(
+                getId(),
+                getNextVersion(),
+                address.getStreet(),
+                address.getHouseNo(),
+                address.getZip(),
+                address.getCity(),
+                address.getCountry()));
+    }
 
     public void updateCreditCard(CreditCard creditCard) {
         if (creditCard == null) {

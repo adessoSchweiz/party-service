@@ -32,6 +32,8 @@ public class PassengerService {
 
     public void updatePassenger(Passenger passenger, Passenger storedPassenger) {
         storedPassenger.updatePassengerData(passenger);
+        storedPassenger.updateCreditCard(passenger.getCreditCard());
+        storedPassenger.updateAddress(passenger.getAddress());
         kafkaStore.publishEvents(storedPassenger.getUncommitedEvents());
         storedPassenger.clearEvents();
     }
