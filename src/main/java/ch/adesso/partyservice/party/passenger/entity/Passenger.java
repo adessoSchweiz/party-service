@@ -125,7 +125,7 @@ public class Passenger extends AggregateRoot {
 
     public void applyEvent(AddressCreatedEvent event) {
         setVersion(event.getSequence());
-        Address address = new Address(event.getStreet(), event.getHouseNo(), event.getZip(), event.getCity(), event.getCountry());
+        Address address = new Address(event.getStreet(), event.getHouseNumber(), event.getZip(), event.getCity(), event.getCountry());
         setAddress(address);
     }
 

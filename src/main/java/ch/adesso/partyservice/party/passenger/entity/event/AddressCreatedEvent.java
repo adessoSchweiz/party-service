@@ -15,7 +15,7 @@ public class AddressCreatedEvent extends PartyEvent {
     @Nullable
     private String street;
     @Nullable
-    private String houseNo;
+    private String houseNumber;
     @Nullable
     private String zip;
     @Nullable
@@ -23,10 +23,10 @@ public class AddressCreatedEvent extends PartyEvent {
     @Nullable
     private String country;
 
-    public AddressCreatedEvent(String aggregateId, long sequence, String street, String houseNo, String zip, String city, String country) {
+    public AddressCreatedEvent(String aggregateId, long sequence, String street, String houseNumber, String zip, String city, String country) {
         super(AddressCreatedEvent.class, aggregateId, sequence);
         this.street = street;
-        this.houseNo = houseNo;
+        this.houseNumber = houseNumber;
         this.city = city;
         this.zip = zip;
         this.country = country;
