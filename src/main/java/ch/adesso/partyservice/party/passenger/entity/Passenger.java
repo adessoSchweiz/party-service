@@ -39,24 +39,24 @@ public class Passenger extends AggregateRoot {
         ID("id"), FIRSTNAME("firstname"), LASTNAME("lastname"), BIRTHDAY("birthday"), STATUS("status"), MOBIL("mobil"), EMAIL("email"), ADDRESS("address");
 
         @Getter
-        private String name;
+        private String keyName;
 
-        JSON_KEYS(String name) {
-            this.name = name;
+        JSON_KEYS(String keyName) {
+            this.keyName = keyName;
         }
 
     }
 
     public JsonObject toJson() {
         return Json.createObjectBuilder()
-                .add(JSON_KEYS.ID.getName(), getId())
-                .add(JSON_KEYS.FIRSTNAME.getName(), getFirstname())
-                .add(JSON_KEYS.LASTNAME.getName(), getLastname())
-                .add(JSON_KEYS.BIRTHDAY.getName(), getBirthday())
-                .add(JSON_KEYS.STATUS.getName(), getStatus())
-                .add(JSON_KEYS.MOBIL.getName(), getMobil())
-                .add(JSON_KEYS.EMAIL.getName(), getEmail())
-                .add(JSON_KEYS.ADDRESS.getName(), getAddress().toJson())
+                .add(JSON_KEYS.ID.getKeyName(), getId())
+                .add(JSON_KEYS.FIRSTNAME.getKeyName(), getFirstname())
+                .add(JSON_KEYS.LASTNAME.getKeyName(), getLastname())
+                .add(JSON_KEYS.BIRTHDAY.getKeyName(), getBirthday())
+                .add(JSON_KEYS.STATUS.getKeyName(), getStatus())
+                .add(JSON_KEYS.MOBIL.getKeyName(), getMobil())
+                .add(JSON_KEYS.EMAIL.getKeyName(), getEmail())
+                .add(JSON_KEYS.ADDRESS.getKeyName(), getAddress().toJson())
                 .build();
     }
 
@@ -72,14 +72,14 @@ public class Passenger extends AggregateRoot {
     }
 
     public Passenger(JsonObject passenger) {
-        setId(passenger.getString(JSON_KEYS.ID.getName(), null));
-        setFirstname(passenger.getString(JSON_KEYS.FIRSTNAME.getName(), null));
-        setLastname(passenger.getString(JSON_KEYS.LASTNAME.getName(), null));
-        setBirthday(passenger.getString(JSON_KEYS.BIRTHDAY.getName(), null));
-        setStatus(passenger.getString(JSON_KEYS.STATUS.getName(), null));
-        setMobil(passenger.getString(JSON_KEYS.MOBIL.getName(), null));
-        setEmail(passenger.getString(JSON_KEYS.EMAIL.getName(), null));
-        setAddress(new Address(passenger.getJsonObject(JSON_KEYS.ADDRESS.getName())));
+        setId(passenger.getString(JSON_KEYS.ID.getKeyName(), null));
+        setFirstname(passenger.getString(JSON_KEYS.FIRSTNAME.getKeyName(), null));
+        setLastname(passenger.getString(JSON_KEYS.LASTNAME.getKeyName(), null));
+        setBirthday(passenger.getString(JSON_KEYS.BIRTHDAY.getKeyName(), null));
+        setStatus(passenger.getString(JSON_KEYS.STATUS.getKeyName(), null));
+        setMobil(passenger.getString(JSON_KEYS.MOBIL.getKeyName(), null));
+        setEmail(passenger.getString(JSON_KEYS.EMAIL.getKeyName(), null));
+        setAddress(new Address(passenger.getJsonObject(JSON_KEYS.ADDRESS.getKeyName())));
     }
 
     public Passenger(Collection<CoreEvent> events) {

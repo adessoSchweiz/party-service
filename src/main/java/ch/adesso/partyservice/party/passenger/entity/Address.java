@@ -26,20 +26,20 @@ public class Address {
         STREET("street"), HOUSE_NO("house_number"), CITY("city"), COUNTRY("country"), ZIP("zip");
 
         @Getter
-        private String name;
+        private String keyName;
 
-        JSON_KEYS(String name) {
-            this.name = name;
+        JSON_KEYS(String keyName) {
+            this.keyName = keyName;
         }
 
     }
 
     public Address(JsonObject address) {
-        setStreet(address.getString(JSON_KEYS.STREET.getName(), null));
-        setHouseNo(address.getString(JSON_KEYS.HOUSE_NO.getName(), null));
-        setCity(address.getString(JSON_KEYS.CITY.getName(), null));
-        setCountry(address.getString(JSON_KEYS.COUNTRY.getName(), null));
-        setZip(address.getString(JSON_KEYS.ZIP.getName(), null));
+        setStreet(address.getString(JSON_KEYS.STREET.getKeyName(), null));
+        setHouseNo(address.getString(JSON_KEYS.HOUSE_NO.getKeyName(), null));
+        setCity(address.getString(JSON_KEYS.CITY.getKeyName(), null));
+        setCountry(address.getString(JSON_KEYS.COUNTRY.getKeyName(), null));
+        setZip(address.getString(JSON_KEYS.ZIP.getKeyName(), null));
     }
 
     public Address(Address address) {
@@ -52,11 +52,11 @@ public class Address {
 
     public JsonObject toJson() {
         return Json.createObjectBuilder()
-                .add(JSON_KEYS.STREET.getName(), getStreet())
-                .add(JSON_KEYS.HOUSE_NO.getName(), getHouseNo())
-                .add(JSON_KEYS.CITY.getName(), getCity())
-                .add(JSON_KEYS.COUNTRY.getName(), getCountry())
-                .add(JSON_KEYS.ZIP.getName(), getZip())
+                .add(JSON_KEYS.STREET.getKeyName(), getStreet())
+                .add(JSON_KEYS.HOUSE_NO.getKeyName(), getHouseNo())
+                .add(JSON_KEYS.CITY.getKeyName(), getCity())
+                .add(JSON_KEYS.COUNTRY.getKeyName(), getCountry())
+                .add(JSON_KEYS.ZIP.getKeyName(), getZip())
                 .build();
     }
 

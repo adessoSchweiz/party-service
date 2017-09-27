@@ -48,18 +48,18 @@ public class PassengerServiceIT {
     @Test
     public void a01_shouldCreatePerson() {
         JsonObject personToCreate = Json.createObjectBuilder()
-                .add(Passenger.JSON_KEYS.FIRSTNAME.getName(), FIRSTNAME)
-                .add(Passenger.JSON_KEYS.LASTNAME.getName(), LASTNAME)
-                .add(Passenger.JSON_KEYS.BIRTHDAY.getName(), BIRTHDAY)
-                .add(Passenger.JSON_KEYS.STATUS.getName(), STATUS)
-                .add(Passenger.JSON_KEYS.MOBIL.getName(), MOBIL)
-                .add(Passenger.JSON_KEYS.EMAIL.getName(), EMAIL)
-                .add(Passenger.JSON_KEYS.ADDRESS.getName(), Json.createObjectBuilder()
-                        .add(Address.JSON_KEYS.STREET.getName(), ADDRESS.STREET)
-                        .add(Address.JSON_KEYS.HOUSE_NO.getName(), ADDRESS.HOUSE_NO)
-                        .add(Address.JSON_KEYS.CITY.getName(), ADDRESS.CITY)
-                        .add(Address.JSON_KEYS.COUNTRY.getName(), ADDRESS.COUNTRY)
-                        .add(Address.JSON_KEYS.ZIP.getName(), ADDRESS.ZIP)
+                .add(Passenger.JSON_KEYS.FIRSTNAME.getKeyName(), FIRSTNAME)
+                .add(Passenger.JSON_KEYS.LASTNAME.getKeyName(), LASTNAME)
+                .add(Passenger.JSON_KEYS.BIRTHDAY.getKeyName(), BIRTHDAY)
+                .add(Passenger.JSON_KEYS.STATUS.getKeyName(), STATUS)
+                .add(Passenger.JSON_KEYS.MOBIL.getKeyName(), MOBIL)
+                .add(Passenger.JSON_KEYS.EMAIL.getKeyName(), EMAIL)
+                .add(Passenger.JSON_KEYS.ADDRESS.getKeyName(), Json.createObjectBuilder()
+                        .add(Address.JSON_KEYS.STREET.getKeyName(), ADDRESS.STREET)
+                        .add(Address.JSON_KEYS.HOUSE_NO.getKeyName(), ADDRESS.HOUSE_NO)
+                        .add(Address.JSON_KEYS.CITY.getKeyName(), ADDRESS.CITY)
+                        .add(Address.JSON_KEYS.COUNTRY.getKeyName(), ADDRESS.COUNTRY)
+                        .add(Address.JSON_KEYS.ZIP.getKeyName(), ADDRESS.ZIP)
                 )
                 .build();
 
@@ -72,7 +72,7 @@ public class PassengerServiceIT {
 
         ID = postResponse
                 .readEntity(JsonObject.class)
-                .getString(Passenger.JSON_KEYS.ID.getName());
+                .getString(Passenger.JSON_KEYS.ID.getKeyName());
     }
 
     @Test
@@ -82,20 +82,20 @@ public class PassengerServiceIT {
                 .queryParam("personId", ID)
                 .request(MediaType.APPLICATION_JSON)
                 .get(JsonObject.class);
-        assertThat(person.getString(Passenger.JSON_KEYS.FIRSTNAME.getName()), is(FIRSTNAME));
-        assertThat(person.getString(Passenger.JSON_KEYS.LASTNAME.getName()), is(LASTNAME));
-        assertThat(person.getString(Passenger.JSON_KEYS.BIRTHDAY.getName()), is(BIRTHDAY));
-        assertThat(person.getString(Passenger.JSON_KEYS.STATUS.getName()), is(STATUS));
-        assertThat(person.getString(Passenger.JSON_KEYS.MOBIL.getName()), is(MOBIL));
-        assertThat(person.getString(Passenger.JSON_KEYS.EMAIL.getName()), is(EMAIL));
+        assertThat(person.getString(Passenger.JSON_KEYS.FIRSTNAME.getKeyName()), is(FIRSTNAME));
+        assertThat(person.getString(Passenger.JSON_KEYS.LASTNAME.getKeyName()), is(LASTNAME));
+        assertThat(person.getString(Passenger.JSON_KEYS.BIRTHDAY.getKeyName()), is(BIRTHDAY));
+        assertThat(person.getString(Passenger.JSON_KEYS.STATUS.getKeyName()), is(STATUS));
+        assertThat(person.getString(Passenger.JSON_KEYS.MOBIL.getKeyName()), is(MOBIL));
+        assertThat(person.getString(Passenger.JSON_KEYS.EMAIL.getKeyName()), is(EMAIL));
 
-        JsonObject address = person.getJsonObject(Passenger.JSON_KEYS.ADDRESS.getName());
+        JsonObject address = person.getJsonObject(Passenger.JSON_KEYS.ADDRESS.getKeyName());
         System.out.println("address = " + address);
-        assertThat(address.getString(Address.JSON_KEYS.STREET.getName()), is(ADDRESS.STREET));
-        assertThat(address.getString(Address.JSON_KEYS.HOUSE_NO.getName()), is(ADDRESS.HOUSE_NO));
-        assertThat(address.getString(Address.JSON_KEYS.CITY.getName()), is(ADDRESS.CITY));
-        assertThat(address.getString(Address.JSON_KEYS.COUNTRY.getName()), is(ADDRESS.COUNTRY));
-        assertThat(address.getString(Address.JSON_KEYS.ZIP.getName()), is(ADDRESS.ZIP));
+        assertThat(address.getString(Address.JSON_KEYS.STREET.getKeyName()), is(ADDRESS.STREET));
+        assertThat(address.getString(Address.JSON_KEYS.HOUSE_NO.getKeyName()), is(ADDRESS.HOUSE_NO));
+        assertThat(address.getString(Address.JSON_KEYS.CITY.getKeyName()), is(ADDRESS.CITY));
+        assertThat(address.getString(Address.JSON_KEYS.COUNTRY.getKeyName()), is(ADDRESS.COUNTRY));
+        assertThat(address.getString(Address.JSON_KEYS.ZIP.getKeyName()), is(ADDRESS.ZIP));
     }
 
 }
