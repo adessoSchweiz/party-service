@@ -56,7 +56,7 @@ public class PassengerServiceIT {
                 .add(Passenger.JSON_KEYS.EMAIL.getKeyName(), EMAIL)
                 .add(Passenger.JSON_KEYS.ADDRESS.getKeyName(), Json.createObjectBuilder()
                         .add(Address.JSON_KEYS.STREET.getKeyName(), ADDRESS.STREET)
-                        .add(Address.JSON_KEYS.HOUSE_NO.getKeyName(), ADDRESS.HOUSE_NO)
+                        .add(Address.JSON_KEYS.HOUSE_NUMBER.getKeyName(), ADDRESS.HOUSE_NO)
                         .add(Address.JSON_KEYS.CITY.getKeyName(), ADDRESS.CITY)
                         .add(Address.JSON_KEYS.COUNTRY.getKeyName(), ADDRESS.COUNTRY)
                         .add(Address.JSON_KEYS.ZIP.getKeyName(), ADDRESS.ZIP)
@@ -92,7 +92,7 @@ public class PassengerServiceIT {
         JsonObject address = person.getJsonObject(Passenger.JSON_KEYS.ADDRESS.getKeyName());
         System.out.println("address = " + address);
         assertThat(address.getString(Address.JSON_KEYS.STREET.getKeyName()), is(ADDRESS.STREET));
-        assertThat(address.getString(Address.JSON_KEYS.HOUSE_NO.getKeyName()), is(ADDRESS.HOUSE_NO));
+        assertThat(address.getString(Address.JSON_KEYS.HOUSE_NUMBER.getKeyName()), is(ADDRESS.HOUSE_NO));
         assertThat(address.getString(Address.JSON_KEYS.CITY.getKeyName()), is(ADDRESS.CITY));
         assertThat(address.getString(Address.JSON_KEYS.COUNTRY.getKeyName()), is(ADDRESS.COUNTRY));
         assertThat(address.getString(Address.JSON_KEYS.ZIP.getKeyName()), is(ADDRESS.ZIP));
