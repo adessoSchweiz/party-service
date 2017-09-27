@@ -35,11 +35,11 @@ public class Address {
     }
 
     public Address(JsonObject address) {
-        setStreet(address.getString(JSON_KEYS.STREET.getName()));
-        setHouseNo(address.getString(JSON_KEYS.HOUSE_NO.getName()));
-        setCity(address.getString(JSON_KEYS.CITY.getName()));
-        setCountry(address.getString(JSON_KEYS.COUNTRY.getName()));
-        setZip(address.getString(JSON_KEYS.ZIP.getName()));
+        setStreet(address.getString(JSON_KEYS.STREET.getName(), null));
+        setHouseNo(address.getString(JSON_KEYS.HOUSE_NO.getName(), null));
+        setCity(address.getString(JSON_KEYS.CITY.getName(), null));
+        setCountry(address.getString(JSON_KEYS.COUNTRY.getName(), null));
+        setZip(address.getString(JSON_KEYS.ZIP.getName(), null));
     }
 
     public Address(Address address) {

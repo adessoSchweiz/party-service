@@ -2,7 +2,6 @@ package ch.adesso.partyservice.party.passenger.entity;
 
 import ch.adesso.partyservice.AggregateRoot;
 import ch.adesso.partyservice.CoreEvent;
-import ch.adesso.partyservice.party.passenger.PersonCreatedEvent;
 import ch.adesso.partyservice.party.passenger.entity.event.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -37,11 +36,6 @@ public class Passenger extends AggregateRoot {
     private Address address;
     @Nullable
     private CreditCard creditCard;
-
-    public void applyEvent(PersonCreatedEvent event) {
-        setId(event.getAggregateId());
-        setVersion(event.getSequence());
-    }
 
     public enum JSON_KEYS {
         ID("id"), FIRSTNAME("firstname"), LASTNAME("lastname"), BIRTHDAY("birthday"), STATUS("status"), MOBIL("mobil"), EMAIL("email"), ADDRESS("address");
@@ -81,12 +75,12 @@ public class Passenger extends AggregateRoot {
 
     public Passenger(JsonObject passenger) {
         setId(passenger.getString(JSON_KEYS.ID.getName(), null));
-        setFirstname(passenger.getString(JSON_KEYS.FIRSTNAME.getName()));
-        setLastname(passenger.getString(JSON_KEYS.LASTNAME.getName()));
-        setBirthday(passenger.getString(JSON_KEYS.BIRTHDAY.getName()));
-        setStatus(passenger.getString(JSON_KEYS.STATUS.getName()));
-        setMobil(passenger.getString(JSON_KEYS.MOBIL.getName()));
-        setEmail(passenger.getString(JSON_KEYS.EMAIL.getName()));
+        setFirstname(passenger.getString(JSON_KEYS.FIRSTNAME.getName(), null));
+        setLastname(passenger.getString(JSON_KEYS.LASTNAME.getName(), null));
+        setBirthday(passenger.getString(JSON_KEYS.BIRTHDAY.getName(), null));
+        setStatus(passenger.getString(JSON_KEYS.STATUS.getName(), null));
+        setMobil(passenger.getString(JSON_KEYS.MOBIL.getName(), null));
+        setEmail(passenger.getString(JSON_KEYS.EMAIL.getName(), null));
         setAddress(new Address(passenger.getJsonObject(JSON_KEYS.ADDRESS.getName())));
     }
 

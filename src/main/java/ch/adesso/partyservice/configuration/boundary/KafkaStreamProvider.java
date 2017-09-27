@@ -1,9 +1,9 @@
 package ch.adesso.partyservice.configuration.boundary;
 
-import ch.adesso.partyservice.party.PartyEventStream;
-import ch.adesso.partyservice.EventEnvelope;
 import ch.adesso.partyservice.AggregateProcessor;
+import ch.adesso.partyservice.EventEnvelope;
 import ch.adesso.partyservice.Topics;
+import ch.adesso.partyservice.party.PartyEventStream;
 import ch.adesso.partyservice.serializer.boundary.KafkaAvroReflectDeserializer;
 import ch.adesso.partyservice.serializer.boundary.KafkaAvroReflectSerializer;
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
@@ -91,26 +91,13 @@ public class KafkaStreamProvider {
         String sourceName = "party-events-source";
         String processorName = "party-processor";
         StateStoreSupplier<?> stateStore = createStateStore(eventStreamSerde);
-        StateStoreSupplier<?> storeLogin = createStoreLogin(eventStreamSerde);
 
         return new KStreamBuilder()
                 .addStateStore(stateStore)
-                .addStateStore(storeLogin)
                 .addSource(sourceName, new StringDeserializer(), eventSerde.deserializer(), Topics.PARTY_EVENTS_TOPIC.getTopic())
                 .addProcessor(processorName,
-                        () -> new AggregateProcessor(Topics.PARTY_STORE.getTopic(),
-                                Topics.PARTY_LOGIN_STORE.getTopic()),
-                        sourceName)
-                .connectProcessorAndStateStores(processorName, stateStore.name(), storeLogin.name());
-    }
-
-    public StateStoreSupplier<?> createStoreLogin(Serde<PartyEventStream> eventStreamSerde) {
-        return create(Topics.PARTY_LOGIN_STORE.getTopic())
-                .withKeys(Serdes.String())
-                .withValues(eventStreamSerde)
-                .persistent()
-                .enableCaching()
-                .build();
+                        () -> new AggregateProcessor(Topics.PARTY_STORE.getTopic()), sourceName)
+                .connectProcessorAndStateStores(processorName, stateStore.name());
     }
 
     public StateStoreSupplier<?> createStateStore(Serde<PartyEventStream> eventStreamSerde) {
