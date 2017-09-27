@@ -2,6 +2,7 @@ package ch.adesso.partyservice.logging.boundary;
 
 import ch.adesso.partyservice.CoreEvent;
 import ch.adesso.partyservice.party.passenger.PersonCreatedEvent;
+import ch.adesso.partyservice.party.passenger.entity.event.PassengerCreatedEvent;
 
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
@@ -21,7 +22,8 @@ public class EventLogger {
         LOG.info("Event: " + event + " sucessfully processed.");
     }
 
-    public void logEvent(@Observes PersonCreatedEvent event) {
+    public void logEvent(@Observes PassengerCreatedEvent event) {
         LOG.info("Passenger created, ID: " + event.getAggregateId() + " Version: " + event.getSequence());
+
     }
 }

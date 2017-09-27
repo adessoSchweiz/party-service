@@ -79,15 +79,15 @@ public class Passenger extends AggregateRoot {
         setAddress(new Address(person.getAddress()));
     }
 
-    public Passenger(JsonObject person) {
-        setId(person.getString(JSON_KEYS.ID.getName()));
-        setFirstname(person.getString(JSON_KEYS.FIRSTNAME.getName()));
-        setLastname(person.getString(JSON_KEYS.LASTNAME.getName()));
-        setBirthday(person.getString(JSON_KEYS.BIRTHDAY.getName()));
-        setStatus(person.getString(JSON_KEYS.STATUS.getName()));
-        setMobil(person.getString(JSON_KEYS.MOBIL.getName()));
-        setEmail(person.getString(JSON_KEYS.EMAIL.getName()));
-        setAddress(new Address(person.getJsonObject(JSON_KEYS.ADDRESS.getName())));
+    public Passenger(JsonObject passenger) {
+        setId(passenger.getString(JSON_KEYS.ID.getName(), null));
+        setFirstname(passenger.getString(JSON_KEYS.FIRSTNAME.getName()));
+        setLastname(passenger.getString(JSON_KEYS.LASTNAME.getName()));
+        setBirthday(passenger.getString(JSON_KEYS.BIRTHDAY.getName()));
+        setStatus(passenger.getString(JSON_KEYS.STATUS.getName()));
+        setMobil(passenger.getString(JSON_KEYS.MOBIL.getName()));
+        setEmail(passenger.getString(JSON_KEYS.EMAIL.getName()));
+        setAddress(new Address(passenger.getJsonObject(JSON_KEYS.ADDRESS.getName())));
     }
 
     public Passenger(Collection<CoreEvent> events) {
