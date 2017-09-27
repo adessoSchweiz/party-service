@@ -32,7 +32,7 @@ public class HealthResource {
             @QueryParam("personId") String personId,
             @Suspended final AsyncResponse asyncResponse) {
         supplyAsync(() -> kafkaStore
-                .findById(personId, Passenger.class), healthPool)
+                .findById(personId, Passenger.class).toJson(), healthPool)
                 .thenApply(asyncResponse::resume);
     }
 }
