@@ -84,7 +84,7 @@ public class Passenger extends AggregateRoot {
         setFirstname(event.getFirstname());
         setLastname(event.getLastname());
         setBirthday(event.getBirthday());
-        setStatus(event.getStatus());
+        setStatus(PartyStatus.valueOf(event.getStatus()));
         setMobil(event.getMobil());
         setEmail(event.getEmail());
     }
