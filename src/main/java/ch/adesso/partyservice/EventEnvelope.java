@@ -1,12 +1,10 @@
 package ch.adesso.partyservice;
 
 import ch.adesso.partyservice.party.PartyEvent;
-import org.apache.avro.reflect.Nullable;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.apache.avro.reflect.Union;
+import org.apache.avro.reflect.Nullable;
 
 @NoArgsConstructor
 @ToString
@@ -22,8 +20,4 @@ public class EventEnvelope {
         this.event = event;
     }
 
-    @Union(Void.class)
-    public PartyEvent getEvent() {
-        return event;
-    }
 }
