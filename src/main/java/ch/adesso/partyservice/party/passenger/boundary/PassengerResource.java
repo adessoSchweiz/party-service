@@ -37,7 +37,7 @@ public class PassengerResource {
                 .build();
 
        /* supplyAsync(() -> Response
-                .status(Response.Status.CREATED)
+                .status(Response.PartyStatus.CREATED)
                 .entity(passengerService.createPassenger(new Passenger(passenger)))
                 .build(), personPool)
                 .thenApply(asyncResponse::resume);

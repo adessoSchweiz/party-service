@@ -25,7 +25,7 @@ public class Passenger extends AggregateRoot {
     @Nullable
     private String birthday;
     @Nullable
-    private String status;
+    private PartyStatus status;
     @Nullable
     private String mobil;
     @Nullable
@@ -61,7 +61,7 @@ public class Passenger extends AggregateRoot {
                 .add(JSON_KEYS.FIRSTNAME.getKeyName(), getFirstname())
                 .add(JSON_KEYS.LASTNAME.getKeyName(), getLastname())
                 .add(JSON_KEYS.BIRTHDAY.getKeyName(), getBirthday())
-                .add(JSON_KEYS.STATUS.getKeyName(), getStatus())
+                .add(JSON_KEYS.STATUS.getKeyName(), getStatus().name())
                 .add(JSON_KEYS.MOBIL.getKeyName(), getMobil())
                 .add(JSON_KEYS.EMAIL.getKeyName(), getEmail())
                 .add(JSON_KEYS.ADDRESS.getKeyName(), getAddress().toJson())
@@ -74,7 +74,7 @@ public class Passenger extends AggregateRoot {
         setFirstname(passenger.getString(JSON_KEYS.FIRSTNAME.getKeyName(), null));
         setLastname(passenger.getString(JSON_KEYS.LASTNAME.getKeyName(), null));
         setBirthday(passenger.getString(JSON_KEYS.BIRTHDAY.getKeyName(), null));
-        setStatus(passenger.getString(JSON_KEYS.STATUS.getKeyName(), null));
+        setStatus(PartyStatus.valueOf(passenger.getString(JSON_KEYS.STATUS.getKeyName(), null)));
         setMobil(passenger.getString(JSON_KEYS.MOBIL.getKeyName(), null));
         setEmail(passenger.getString(JSON_KEYS.EMAIL.getKeyName(), null));
         setAddress(new Address(passenger.getJsonObject(JSON_KEYS.ADDRESS.getKeyName())));

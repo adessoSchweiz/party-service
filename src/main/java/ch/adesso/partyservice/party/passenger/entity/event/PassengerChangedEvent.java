@@ -1,6 +1,7 @@
 package ch.adesso.partyservice.party.passenger.entity.event;
 
 import ch.adesso.partyservice.party.PartyEvent;
+import ch.adesso.partyservice.party.passenger.entity.PartyStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -20,13 +21,13 @@ public class PassengerChangedEvent extends PartyEvent {
     @Nullable
     private String birthday;
     @Nullable
-    private String status;
+    private PartyStatus status;
     @Nullable
     private String mobil;
     @Nullable
     private String email;
 
-    public PassengerChangedEvent(String aggregateId, long sequence, String firstname, String lastname, String birthday, String status, String mobile, String email) {
+    public PassengerChangedEvent(String aggregateId, long sequence, String firstname, String lastname, String birthday, PartyStatus status, String mobile, String email) {
         super(PassengerChangedEvent.class, aggregateId, sequence);
         this.firstname = firstname;
         this.lastname = lastname;
