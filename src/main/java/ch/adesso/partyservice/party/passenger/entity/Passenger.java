@@ -1,6 +1,7 @@
 package ch.adesso.partyservice.party.passenger.entity;
 
 import ch.adesso.partyservice.AggregateRoot;
+import ch.adesso.partyservice.NullAwareJsonObjectBuilder;
 import ch.adesso.partyservice.party.passenger.entity.event.*;
 import lombok.*;
 
@@ -45,7 +46,7 @@ public class Passenger extends AggregateRoot {
     }
 
     public JsonObject toJson() {
-        return Json.createObjectBuilder()
+        return NullAwareJsonObjectBuilder.wrap(Json.createObjectBuilder())
                 .add(JSON_KEYS.ID.getKeyName(), getId())
                 .add(JSON_KEYS.FIRSTNAME.getKeyName(), getFirstname())
                 .add(JSON_KEYS.LASTNAME.getKeyName(), getLastname())

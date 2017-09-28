@@ -1,5 +1,6 @@
 package ch.adesso.partyservice.party.passenger.entity;
 
+import ch.adesso.partyservice.NullAwareJsonObjectBuilder;
 import lombok.*;
 
 import javax.json.Json;
@@ -43,7 +44,7 @@ public class CreditCard {
     }
 
     public JsonObject toJson() {
-        return Json.createObjectBuilder()
+        return NullAwareJsonObjectBuilder.wrap(Json.createObjectBuilder())
                 .add(JSON_KEYS.CARD_NUMBER.getKeyName(), getCardNumber())
                 .add(JSON_KEYS.CARD_TYPE.getKeyName(), getCardType().name())
                 .add(JSON_KEYS.NAME_ON_CARD.getKeyName(), getNameOnCard())

@@ -1,5 +1,6 @@
 package ch.adesso.partyservice.party.passenger.entity;
 
+import ch.adesso.partyservice.NullAwareJsonObjectBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -37,7 +38,7 @@ public class Address {
     }
 
     public JsonObject toJson() {
-        return Json.createObjectBuilder()
+        return NullAwareJsonObjectBuilder.wrap(Json.createObjectBuilder())
                 .add(JSON_KEYS.STREET.getKeyName(), getStreet())
                 .add(JSON_KEYS.HOUSE_NUMBER.getKeyName(), this.getHouseNumber())
                 .add(JSON_KEYS.CITY.getKeyName(), getCity())
