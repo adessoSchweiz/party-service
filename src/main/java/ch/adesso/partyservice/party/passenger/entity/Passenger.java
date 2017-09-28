@@ -54,8 +54,8 @@ public class Passenger extends AggregateRoot {
                 .add(JSON_KEYS.STATUS.getKeyName(), (getStatus() == null) ? null : getStatus().name())
                 .add(JSON_KEYS.MOBIL.getKeyName(), getMobil())
                 .add(JSON_KEYS.EMAIL.getKeyName(), getEmail())
-                .add(JSON_KEYS.ADDRESS.getKeyName(), getAddress().toJson())
-                .add(JSON_KEYS.CREDIT_CARD.getKeyName(), getCreditCard().toJson())
+                .add(JSON_KEYS.ADDRESS.getKeyName(), (getAddress() == null) ? null : getAddress().toJson())
+                .add(JSON_KEYS.CREDIT_CARD.getKeyName(), (getCreditCard() == null) ? null : getCreditCard().toJson())
                 .build();
     }
 
