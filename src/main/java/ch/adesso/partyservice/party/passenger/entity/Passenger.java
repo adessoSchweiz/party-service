@@ -72,8 +72,8 @@ public class Passenger extends AggregateRoot {
         setStatus((statusText == null) ? null : PartyStatus.valueOf(statusText));
         setMobil(passenger.getString(JSON_KEYS.MOBIL.getKeyName(), null));
         setEmail(passenger.getString(JSON_KEYS.EMAIL.getKeyName(), null));
-        setAddress((addressJO == null) ? null : new Address((JsonObject) addressJO));
-        setCreditCard((creditCardJO == null) ? null : new CreditCard((JsonObject) creditCardJO));
+        setAddress((addressJO == null || addressJO.equals(JsonValue.NULL)) ? null : new Address((JsonObject) addressJO));
+        setCreditCard((creditCardJO == null || creditCardJO.equals(JsonValue.NULL)) ? null : new CreditCard((JsonObject) creditCardJO));
     }
 
     public Passenger(String id) {
