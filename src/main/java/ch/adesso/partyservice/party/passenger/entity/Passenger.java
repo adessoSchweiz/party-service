@@ -60,15 +60,19 @@ public class Passenger extends AggregateRoot {
     }
 
     public Passenger(JsonObject passenger) {
+        String statusText = passenger.getString(JSON_KEYS.STATUS.getKeyName(), null);
+        JsonObject addressJO = passenger.getJsonObject(JSON_KEYS.ADDRESS.getKeyName());
+        JsonObject creditCardJO = passenger.getJsonObject(JSON_KEYS.CREDIT_CARD.getKeyName());
+
         setId(passenger.getString(JSON_KEYS.ID.getKeyName(), null));
         setFirstname(passenger.getString(JSON_KEYS.FIRSTNAME.getKeyName(), null));
         setLastname(passenger.getString(JSON_KEYS.LASTNAME.getKeyName(), null));
         setBirthday(passenger.getString(JSON_KEYS.BIRTHDAY.getKeyName(), null));
-        setStatus(PartyStatus.valueOf(passenger.getString(JSON_KEYS.STATUS.getKeyName(), null)));
+        setStatus((statusText == null) ? null : PartyStatus.valueOf(statusText));
         setMobil(passenger.getString(JSON_KEYS.MOBIL.getKeyName(), null));
         setEmail(passenger.getString(JSON_KEYS.EMAIL.getKeyName(), null));
-        setAddress(new Address(passenger.getJsonObject(JSON_KEYS.ADDRESS.getKeyName())));
-        setCreditCard(new CreditCard(passenger.getJsonObject(JSON_KEYS.CREDIT_CARD.getKeyName())));
+        setAddress((addressJO == null) ? null : new Address(addressJO));
+        setCreditCard((creditCardJO == null) ? null : new CreditCard(creditCardJO));
     }
 
     public Passenger(String id) {
