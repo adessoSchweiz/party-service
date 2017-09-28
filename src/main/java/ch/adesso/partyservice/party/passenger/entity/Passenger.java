@@ -63,7 +63,7 @@ public class Passenger extends AggregateRoot {
     public Passenger(JsonObject passenger) {
         String statusText = passenger.getString(JSON_KEYS.STATUS.getKeyName(), null);
         JsonValue addressJO = passenger.get(JSON_KEYS.ADDRESS.getKeyName());
-        JsonValue creditCardJO = passenger.getJsonObject(JSON_KEYS.CREDIT_CARD.getKeyName());
+        JsonValue creditCardJO = passenger.get(JSON_KEYS.CREDIT_CARD.getKeyName());
 
         setId(passenger.getString(JSON_KEYS.ID.getKeyName(), null));
         setFirstname(passenger.getString(JSON_KEYS.FIRSTNAME.getKeyName(), null));
