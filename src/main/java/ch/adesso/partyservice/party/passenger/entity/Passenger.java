@@ -7,6 +7,7 @@ import lombok.*;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.util.logging.Logger;
 
 @NoArgsConstructor
@@ -61,8 +62,8 @@ public class Passenger extends AggregateRoot {
 
     public Passenger(JsonObject passenger) {
         String statusText = passenger.getString(JSON_KEYS.STATUS.getKeyName(), null);
-        JsonObject addressJO = passenger.getJsonObject(JSON_KEYS.ADDRESS.getKeyName());
-        JsonObject creditCardJO = passenger.getJsonObject(JSON_KEYS.CREDIT_CARD.getKeyName());
+        JsonValue addressJO = passenger.get(JSON_KEYS.ADDRESS.getKeyName());
+        JsonValue creditCardJO = passenger.getJsonObject(JSON_KEYS.CREDIT_CARD.getKeyName());
 
         setId(passenger.getString(JSON_KEYS.ID.getKeyName(), null));
         setFirstname(passenger.getString(JSON_KEYS.FIRSTNAME.getKeyName(), null));
@@ -71,8 +72,8 @@ public class Passenger extends AggregateRoot {
         setStatus((statusText == null) ? null : PartyStatus.valueOf(statusText));
         setMobil(passenger.getString(JSON_KEYS.MOBIL.getKeyName(), null));
         setEmail(passenger.getString(JSON_KEYS.EMAIL.getKeyName(), null));
-        setAddress((addressJO == null) ? null : new Address(addressJO));
-        setCreditCard((creditCardJO == null) ? null : new CreditCard(creditCardJO));
+        setAddress((addressJO == null) ? null : new Address((JsonObject) addressJO));
+        setCreditCard((creditCardJO == null) ? null : new CreditCard((JsonObject) creditCardJO));
     }
 
     public Passenger(String id) {
