@@ -13,10 +13,10 @@ docker rm party-service
 docker run -d \
    --name party-service \
    --net=hackathon \
-   -p 8091:8080 \
+   -p 8092:8080 \
    -e BOOTSTRAP_SERVERS=kafka-1:29092  \
    -e SCHEMA_REGISTRY_URL=http://schema-registry:8081 \
-   -e APPLICATION_SERVER=localhost:8093 \
+   -e APPLICATION_SERVER=localhost:8092 \
    adesso/party-service:${VERSION}
    
 docker logs party-service -f
