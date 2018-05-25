@@ -18,5 +18,3 @@ docker run -d \
    -e SCHEMA_REGISTRY_URL=http://schema-registry:8081 \
    -e APPLICATION_SERVER=localhost:8092 \
    adesso/party-service:${VERSION}
-   
-docker logs party-service -f
